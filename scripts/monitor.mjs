@@ -13,13 +13,204 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const verbose = process.argv.includes('--verbose');
 
+const SCRIPT_SRC_RE = /<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi;
+
 function logVerbose(...args) {
   if (verbose) console.log(...args);
 }
 
-function loadUrls() {
+function loadRawConfig() {
   const p = join(ROOT, 'config/urls.json');
   return JSON.parse(readFileSync(p, 'utf8'));
+}
+
+function entryFromAbsoluteUrl(absUrl, stripQueryDefault) {
+  let u;
+  try {
+    u = new URL(absUrl);
+  } catch {
+    return null;
+  }
+  if (stripQueryDefault) {
+    u.search = '';
+  }
+  const path = u.pathname;
+  const base = path.split('/').pop() || path;
+  const id = base.replace(/\.js$/i, '') || path;
+  return {
+    id,
+    url: u.toString(),
+    stripQuery: stripQueryDefault,
+  };
+}
+
+function matchesDiscovery(urlObj, d) {
+  const host = d.scriptHost.toLowerCase();
+  if (urlObj.hostname.toLowerCase() !== host) return false;
+  if (d.pathIncludes && !urlObj.pathname.includes(d.pathIncludes)) return false;
+  if (d.requireExtension && !urlObj.pathname.endsWith(d.requireExtension)) {
+    return false;
+  }
+  return true;
+}
+
+/** URLs a otros /c/*.js embebidas en el cuerpo del supertag (2.º paso de carga). */
+function referencedJsPattern(discovery) {
+  const host = discovery.scriptHost.replace(/\./g, '\\.');
+  return new RegExp(
+    `https://${host}/c/[a-zA-Z0-9._-]+\\.js`,
+    'gi'
+  );
+}
+
+async function expandWithReferencedScripts(seedEntries, discovery) {
+  if (discovery.deepScanReferencedScripts === false) {
+    return seedEntries;
+  }
+  const stripQ = discovery.stripQuery !== false;
+  const byKey = new Map(seedEntries.map((e) => [normalizeFetchUrl(e), e]));
+  const refRe = referencedJsPattern(discovery);
+
+  for (const entry of seedEntries) {
+    const url = normalizeFetchUrl(entry);
+    const res = await fetch(url, {
+      redirect: 'follow',
+      headers: {
+        'User-Agent':
+          'adzone-monitor/1.0 (deep scan; GitHub Actions)',
+      },
+    });
+    if (!res.ok) {
+      logVerbose(`deepScan: omito ${url} (HTTP ${res.status})`);
+      continue;
+    }
+    const text = await res.text();
+    const re = new RegExp(refRe.source, refRe.flags);
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      let abs;
+      try {
+        abs = new URL(m[0]);
+      } catch {
+        continue;
+      }
+      if (stripQ) abs.search = '';
+      if (!matchesDiscovery(abs, discovery)) continue;
+      const key = abs.toString();
+      if (byKey.has(key)) continue;
+      const ent = entryFromAbsoluteUrl(key, stripQ);
+      if (ent) {
+        byKey.set(key, ent);
+        logVerbose(`  (referenciado en JS) + ${ent.id} ← ${key}`);
+      }
+    }
+  }
+
+  return [...byKey.values()].sort((a, b) => a.id.localeCompare(b.id));
+}
+
+function extractScriptSrcs(html) {
+  const out = [];
+  let m;
+  const re = new RegExp(SCRIPT_SRC_RE.source, SCRIPT_SRC_RE.flags);
+  while ((m = re.exec(html)) !== null) {
+    out.push(m[1].trim());
+  }
+  return out;
+}
+
+async function discoverEntries(discovery) {
+  const seen = new Map();
+  const stripQ = discovery.stripQuery !== false;
+
+  for (const pageUrl of discovery.pages || []) {
+    const res = await fetch(pageUrl, {
+      redirect: 'follow',
+      headers: {
+        Accept:
+          'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
+        'User-Agent':
+          'adzone-monitor/1.0 (discovery; GitHub Actions)',
+      },
+    });
+    if (!res.ok) {
+      throw new Error(
+        `discovery: ${pageUrl} respondió HTTP ${res.status}`
+      );
+    }
+    const html = await res.text();
+    const hrefs = extractScriptSrcs(html);
+    logVerbose(`discovery: ${pageUrl} → ${hrefs.length} <script src>`);
+
+    for (const href of hrefs) {
+      let abs;
+      try {
+        abs = new URL(href, pageUrl);
+      } catch {
+        continue;
+      }
+      if (!matchesDiscovery(abs, discovery)) continue;
+      if (stripQ) abs.search = '';
+      const key = abs.toString();
+      if (seen.has(key)) continue;
+      const ent = entryFromAbsoluteUrl(key, stripQ);
+      if (ent) {
+        seen.set(key, ent);
+        logVerbose(`  + ${ent.id} ← ${key}`);
+      }
+    }
+  }
+
+  const fromHtml = [...seen.values()].sort((a, b) => a.id.localeCompare(b.id));
+  return expandWithReferencedScripts(fromHtml, discovery);
+}
+
+function normalizeStaticEntry(raw) {
+  const stripQ = raw.stripQuery !== false;
+  const u = stripQ ? raw.url.replace(/\?.*$/, '') : raw.url;
+  const id =
+    raw.id ||
+    (() => {
+      try {
+        const p = new URL(u).pathname.split('/').pop() || '';
+        return p.replace(/\.js$/i, '') || u;
+      } catch {
+        return u;
+      }
+    })();
+  return { id, url: u, stripQuery: stripQ };
+}
+
+async function loadEntries() {
+  const cfg = loadRawConfig();
+
+  if (Array.isArray(cfg)) {
+    return cfg.map((e) => normalizeStaticEntry(e));
+  }
+
+  const out = [];
+  if (cfg.discovery) {
+    const discovered = await discoverEntries(cfg.discovery);
+    out.push(...discovered);
+  }
+  for (const s of cfg.staticUrls || []) {
+    out.push(normalizeStaticEntry(s));
+  }
+
+  const byId = new Map();
+  for (const e of out) {
+    if (byId.has(e.id)) {
+      const prev = byId.get(e.id);
+      if (prev.url !== e.url) {
+        throw new Error(
+          `config: id duplicado "${e.id}" con URLs distintas:\n  ${prev.url}\n  ${e.url}`
+        );
+      }
+      continue;
+    }
+    byId.set(e.id, e);
+  }
+  return [...byId.values()].sort((a, b) => a.id.localeCompare(b.id));
 }
 
 function normalizeFetchUrl(entry) {
@@ -159,13 +350,43 @@ function diffLines(id, prev, next) {
 }
 
 async function main() {
-  const entries = loadUrls();
+  let entries;
+  try {
+    entries = await loadEntries();
+  } catch (e) {
+    console.error(
+      'adzone-monitor:',
+      e instanceof Error ? e.message : e
+    );
+    process.exit(1);
+  }
+
+  if (entries.length === 0) {
+    console.error(
+      'adzone-monitor: no hay URLs que vigilar (discovery vacío y staticUrls vacío)'
+    );
+    process.exit(1);
+  }
+
+  logVerbose(`vigilando ${entries.length} script(s):`, entries.map((e) => e.id));
+
   const snapshot = loadSnapshot();
   const logLines = [];
   let hadProbeError = false;
   let snapshotDirty = false;
 
-  const nextUrls = { ...snapshot.urls };
+  const currentIds = new Set(entries.map((e) => e.id));
+  const nextUrls = {};
+
+  for (const id of Object.keys(snapshot.urls || {})) {
+    if (!currentIds.has(id)) {
+      const prev = snapshot.urls[id];
+      snapshotDirty = true;
+      logLines.push(
+        `${id}: ya no aparece enlazado desde la página (última url: ${prev?.fetchedUrl ?? prev?.configUrl ?? '—'})`
+      );
+    }
+  }
 
   for (const entry of entries) {
     const id = entry.id;

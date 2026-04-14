@@ -1,13 +1,10 @@
-[
-  {
-    "id": "10011_tn-2023-01",
-    "url": "https://s1.adzonestatic.com/c/10011_tn-2023-01.js",
-    "note": "supertag TN"
+{
+  "discovery": {
+    "pages": ["https://tn.com.ar/"],
+    "scriptHost": "s1.adzonestatic.com",
+    "pathIncludes": "/c/",
+    "requireExtension": ".js",
+    "deepScanReferencedScripts": true
   },
-  {
-    "id": "10003_adzone.25.01",
-    "url": "https://s1.adzonestatic.com/c/10003_adzone.25.01.js",
-    "stripQuery": true,
-    "note": "librería rich media (query cache-bust ignorado)"
-  }
-]
+  "staticUrls": []
+}
