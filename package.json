@@ -1,0 +1,14 @@
+{
+  "name": "adzone-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monitoreo de assets estáticos Adzone (TN): detecta cambios vs snapshot anterior",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "monitor": "node scripts/monitor.mjs",
+    "monitor:verbose": "node scripts/monitor.mjs --verbose"
+  }
+}
