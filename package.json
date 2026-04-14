@@ -9,6 +9,7 @@
   },
   "scripts": {
     "monitor": "node scripts/monitor.mjs",
-    "monitor:verbose": "node scripts/monitor.mjs --verbose"
+    "monitor:verbose": "node scripts/monitor.mjs --verbose",
+    "notify-slack": "node scripts/notify-slack.mjs"
   }
 }

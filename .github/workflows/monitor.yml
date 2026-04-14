@@ -34,15 +34,32 @@ jobs:
         if: steps.monitor.outcome == 'failure'
         run: echo "::warning::Monitor con errores (red o HTTP); revisá el log y los artefactos del job."
 
-      - name: Commit y push si hay cambios
+      - name: Detectar cambios (snapshot / log)
+        id: changes
         if: always()
+        run: |
+          git add data/snapshot.json logs/changes.log
+          if git diff --staged --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Sin cambios en snapshot ni log."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Hay cambios: se notificará Slack (si hay webhook) y luego commit."
+          fi
+
+      - name: Notificar Slack
+        if: always() && steps.changes.outputs.changed == 'true'
+        continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          MONITOR_OUTCOME: ${{ steps.monitor.outcome }}
+        run: node scripts/notify-slack.mjs
+
+      - name: Commit y push si hay cambios
+        if: always() && steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/snapshot.json logs/changes.log
-          if git diff --staged --quiet; then
-            echo "Sin cambios en snapshot ni log; no se hace commit."
-          else
-            git commit -m "chore(monitor): cambio detectado en assets Adzone"
-            git push
-          fi
+          git commit -m "chore(monitor): cambio detectado en assets Adzone"
+          git push
