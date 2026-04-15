@@ -5,6 +5,12 @@ on:
     # Cada hora (UTC). Ajustá según zona horaria deseada.
     - cron: '0 * * * *'
   workflow_dispatch:
+    inputs:
+      force_slack_test:
+        description: 'Enviar Slack de prueba aunque no haya cambios'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: adzone-monitor
@@ -38,6 +44,11 @@ jobs:
         id: changes
         if: always()
         run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force_slack_test }}" = "true" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Forzado por workflow_dispatch(force_slack_test=true): se notificará Slack."
+            exit 0
+          fi
           git add data/snapshot.json logs/changes.log
           if git diff --staged --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"

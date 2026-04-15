@@ -42,6 +42,7 @@ El workflow `.github/workflows/monitor.yml`:
 
 - Corre **cada hora** (UTC) y permite ejecución manual.
 - Si cambian `data/snapshot.json` o `logs/changes.log`, notifica **Slack** (secret `SLACK_WEBHOOK_URL`) y hace **commit + push**.
+- En ejecución manual podés forzar un test de Slack con `force_slack_test=true` (envía mensaje aunque no haya cambios).
 
 ### Permisos
 
