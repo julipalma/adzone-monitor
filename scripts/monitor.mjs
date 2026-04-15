@@ -1,16 +1,22 @@
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import {
   readFileSync,
   writeFileSync,
   appendFileSync,
   mkdirSync,
+  mkdtempSync,
   existsSync,
+  rmSync,
 } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
+const JS_CACHE_DIR = join(ROOT, 'data/js-cache');
+const MAX_DIFF_CHARS = 24_000;
 const verbose = process.argv.includes('--verbose');
 
 const SCRIPT_SRC_RE = /<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi;
@@ -264,7 +270,67 @@ async function probe(entry) {
     etag: res.headers.get('etag'),
     lastModified: res.headers.get('last-modified'),
     hints: extractHints(text),
+    body: text,
   };
+}
+
+function safeCacheBasename(id) {
+  return id.replace(/[^a-zA-Z0-9._-]/g, '_');
+}
+
+function jsCachePath(id) {
+  return join(JS_CACHE_DIR, `${safeCacheBasename(id)}.js`);
+}
+
+/**
+ * diff unificado (requiere `diff` en PATH: macOS/Linux; en Windows usar Git Bash/WSL).
+ */
+function unifiedDiffText(oldText, newText) {
+  const dir = mkdtempSync(join(tmpdir(), 'adzone-diff-'));
+  const oldP = join(dir, 'old.js');
+  const newP = join(dir, 'new.js');
+  try {
+    writeFileSync(oldP, oldText, 'utf8');
+    writeFileSync(newP, newText, 'utf8');
+    try {
+      const out = execFileSync('diff', ['-u', oldP, newP], {
+        encoding: 'utf8',
+        maxBuffer: 12 * 1024 * 1024,
+      });
+      return out.trimEnd() || null;
+    } catch (e) {
+      if (e && typeof e.status === 'number') {
+        if (e.status === 1 && e.stdout) {
+          let s = String(e.stdout).trimEnd();
+          if (s.length > MAX_DIFF_CHARS) {
+            s = `${s.slice(0, MAX_DIFF_CHARS)}\n... [diff truncado; ${e.stdout.length} caracteres totales]\n`;
+          }
+          return s;
+        }
+        if (e.status === 0) return null;
+      }
+      return `(diff no disponible: ${e instanceof Error ? e.message : e})`;
+    }
+  } finally {
+    try {
+      rmSync(dir, { recursive: true, force: true });
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+function appendChangeLogDiffBlock(id, diffText) {
+  const dir = join(ROOT, 'logs');
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+  const p = join(dir, 'changes.log');
+  const stamp = new Date().toISOString();
+  appendFileSync(
+    p,
+    `[${stamp}] ${id}: diff unificado (anterior vs actual, vía \`diff -u\`):\n`,
+    'utf8'
+  );
+  appendFileSync(p, `${diffText}\n`, 'utf8');
 }
 
 function loadSnapshot() {
@@ -378,6 +444,8 @@ async function main() {
   const currentIds = new Set(entries.map((e) => e.id));
   const nextUrls = {};
 
+  mkdirSync(JS_CACHE_DIR, { recursive: true });
+
   for (const id of Object.keys(snapshot.urls || {})) {
     if (!currentIds.has(id)) {
       const prev = snapshot.urls[id];
@@ -385,6 +453,14 @@ async function main() {
       logLines.push(
         `${id}: ya no aparece enlazado desde la página (última url: ${prev?.fetchedUrl ?? prev?.configUrl ?? '—'})`
       );
+      const stale = jsCachePath(id);
+      if (existsSync(stale)) {
+        try {
+          rmSync(stale);
+        } catch {
+          /* ignore */
+        }
+      }
     }
   }
 
@@ -407,15 +483,29 @@ async function main() {
       continue;
     }
 
+    const body = data.body;
+    const cachePath = jsCachePath(id);
+    const previousCached = existsSync(cachePath)
+      ? readFileSync(cachePath, 'utf8')
+      : null;
+
     const record = pickStableFields(data, entry);
     const prev = snapshot.urls[id];
     if (!semanticEqual(prev, record)) {
       snapshotDirty = true;
       logLines.push(...diffLines(id, prev, record));
+      if (previousCached !== null && previousCached !== body && prev != null) {
+        const diffText = unifiedDiffText(previousCached, body);
+        if (diffText) {
+          appendChangeLogDiffBlock(id, diffText);
+        }
+      }
       nextUrls[id] = record;
     } else {
       nextUrls[id] = prev;
     }
+
+    writeFileSync(cachePath, body, 'utf8');
     logVerbose(id, record);
   }
 

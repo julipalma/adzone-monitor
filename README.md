@@ -4,6 +4,8 @@ Monitoreo periódico de los JavaScript estáticos de **Adzone** en TN. Ya no hac
 
 Compara cada ejecución con el **snapshot anterior** (status, tamaño, `sha256`, `ETag`, `Last-Modified` y pistas de versión en el propio `.js`).
 
+Cuando el proveedor cambia el contenido del `.js` (cambia el `sha256`), además se guarda en `logs/changes.log` un **diff unificado** (`diff -u`) entre la copia anterior y la nueva. La última versión descargada queda en `data/js-cache/<id>.js` (útil para inspección y para el diff del próximo cambio).
+
 ## Configuración (`config/urls.json`)
 
 Objeto con:
@@ -14,7 +16,7 @@ Objeto con:
 | `discovery.scriptHost` | Host del CDN (p. ej. `s1.adzonestatic.com`). |
 | `discovery.pathIncludes` | Solo rutas que contengan este fragmento (p. ej. `/c/`). |
 | `discovery.requireExtension` | Sufijo requerido (p. ej. `.js`). |
-| `discovery.deepScanReferencedScripts` | Si es `true` (por defecto), tras los scripts del HTML se leen esos `.js` y se añaden más URLs del mismo host que aparezcan como texto (p. ej. `10003_adzone…`, `10003_fastload`). Poné `false` si solo querés el primer nivel. |
+| `discovery.deepScanReferencedScripts` | Si es `true`, tras los scripts del HTML se leen esos `.js` y se añaden más URLs del mismo host que aparezcan como texto. Por defecto conviene `false` si solo querés el script que TN incluye directo en el HTML. |
 | `discovery.stripQuery` | Si es `false`, se conserva query string; por defecto se **ignora** (cache-bust). |
 | `staticUrls` | Lista opcional de `{ "url": "…", "id": "…?", "stripQuery": true }` para scripts que **no** salgan del HTML ni del deep scan. |
 
@@ -34,6 +36,8 @@ node scripts/monitor.mjs --verbose
 ```
 
 - Si el contenido semántico no cambia, **no se reescribe** `data/snapshot.json`.
+- Igual se **actualiza** `data/js-cache/*.js` con el último cuerpo descargado (para el próximo diff).
+- El diff requiere el comando `diff` del sistema (incluido en Linux/macOS; en Windows usá Git Bash o WSL).
 - Si hay error de red, discovery vacío o HTTP ≠ 200 en algún script, el proceso puede salir con código **1**.
 
 ## GitHub Actions
@@ -41,7 +45,7 @@ node scripts/monitor.mjs --verbose
 El workflow `.github/workflows/monitor.yml`:
 
 - Corre **cada hora** (UTC) y permite ejecución manual.
-- Si cambian `data/snapshot.json` o `logs/changes.log`, notifica **Slack** (secret `SLACK_WEBHOOK_URL`) y hace **commit + push**.
+- Si cambian `data/snapshot.json`, `logs/changes.log` o `data/js-cache/`, notifica **Slack** (secret `SLACK_WEBHOOK_URL`) y hace **commit + push**.
 - En ejecución manual podés forzar un test de Slack con `force_slack_test=true` (envía mensaje aunque no haya cambios).
 
 ### Permisos

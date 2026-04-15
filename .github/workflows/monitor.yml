@@ -49,10 +49,10 @@ jobs:
             echo "Forzado por workflow_dispatch(force_slack_test=true): se notificará Slack."
             exit 0
           fi
-          git add data/snapshot.json logs/changes.log
+          git add data/snapshot.json logs/changes.log data/js-cache
           if git diff --staged --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "Sin cambios en snapshot ni log."
+            echo "Sin cambios en snapshot, log ni js-cache."
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "Hay cambios: se notificará Slack (si hay webhook) y luego commit."
@@ -71,7 +71,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/snapshot.json logs/changes.log
+          git add data/snapshot.json logs/changes.log data/js-cache
           if git diff --staged --quiet; then
             echo "No hay cambios reales para commit (probable test forzado de Slack)."
           else
