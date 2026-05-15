@@ -4,7 +4,7 @@
     "scriptHost": "s1.adzonestatic.com",
     "pathIncludes": "/c/",
     "requireExtension": ".js",
-    "deepScanReferencedScripts": false
+    "deepScanReferencedScripts": true
   },
   "staticUrls": []
 }

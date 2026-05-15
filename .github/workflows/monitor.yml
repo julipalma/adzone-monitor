@@ -2,8 +2,8 @@ name: Monitoreo Adzone
 
 on:
   schedule:
-    # Cada hora (UTC). Ajustá según zona horaria deseada.
-    - cron: '0 * * * *'
+    # Cada 30 minutos, en el minuto 16 y 46 (UTC).
+    - cron: '16,46 * * * *'
   workflow_dispatch:
     inputs:
       force_slack_test:
