@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const JS_CACHE_DIR = join(ROOT, 'data/js-cache');
-const MAX_DIFF_CHARS = 24_000;
+const MAX_DIFF_CHARS = 400_000;
 const verbose = process.argv.includes('--verbose');
 
 const SCRIPT_SRC_RE = /<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi;
@@ -353,6 +353,55 @@ function appendChangeLog(lines) {
   }
 }
 
+/**
+ * Elimina del log entradas con más de 1 año de antigüedad.
+ * Agrupa las líneas por entrada (cada entrada arranca con un timestamp "[…]");
+ * las líneas de continuación (contenido del diff) se asocian a la entrada anterior.
+ */
+function pruneChangeLog() {
+  const p = join(ROOT, 'logs', 'changes.log');
+  if (!existsSync(p)) return;
+
+  const raw = readFileSync(p, 'utf8');
+  const lines = raw.split('\n');
+
+  const cutoff = new Date();
+  cutoff.setFullYear(cutoff.getFullYear() - 1);
+
+  // Separar líneas de cabecera (comentarios "#") del cuerpo
+  let bodyStart = 0;
+  while (bodyStart < lines.length && (lines[bodyStart].startsWith('#') || lines[bodyStart].trim() === '')) {
+    bodyStart++;
+  }
+  const headerLines = lines.slice(0, bodyStart);
+
+  // Agrupar el resto en entradas: cada "[…]" abre una nueva; el resto son continuación
+  const entries = [];
+  let current = null;
+  for (let i = bodyStart; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith('[') && line.includes('] ')) {
+      if (current) entries.push(current);
+      const m = line.match(/^\[([^\]]+)\]/);
+      const ts = m ? new Date(m[1]) : null;
+      current = { ts, lines: [line] };
+    } else if (current) {
+      current.lines.push(line);
+    }
+  }
+  if (current) entries.push(current);
+
+  const before = entries.length;
+  const kept = entries.filter(e => !e.ts || isNaN(e.ts) || e.ts >= cutoff);
+  const pruned = before - kept.length;
+  if (pruned === 0) return;
+
+  const body = kept.flatMap(e => e.lines).join('\n');
+  const output = headerLines.join('\n') + (headerLines.length ? '\n' : '') + body;
+  writeFileSync(p, output.endsWith('\n') ? output : output + '\n', 'utf8');
+  logVerbose(`pruneChangeLog: eliminadas ${pruned} entrada(s) anteriores al ${cutoff.toISOString().slice(0, 10)}`);
+}
+
 function semanticEqual(prev, next) {
   if (!prev) return false;
   return (
@@ -519,6 +568,8 @@ async function main() {
     snapshot.updatedAt = new Date().toISOString();
     saveSnapshot(snapshot);
   }
+
+  pruneChangeLog();
 
   if (hadProbeError) {
     console.error('adzone-monitor: terminó con errores de red o HTTP');
