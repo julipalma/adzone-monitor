@@ -16,7 +16,10 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const JS_CACHE_DIR = join(ROOT, 'data/js-cache');
-const MAX_DIFF_CHARS = 400_000;
+// Fix 5: diffs más largos que este umbral se guardan en logs/diffs/ en lugar de inline
+const DIFF_FILE_THRESHOLD = 50_000;
+// Fix 2: cantidad de ejecuciones consecutivas sin ver un script antes de declararlo desaparecido
+const MISS_THRESHOLD = 3;
 const verbose = process.argv.includes('--verbose');
 
 const SCRIPT_SRC_RE = /<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi;
@@ -60,7 +63,6 @@ function matchesDiscovery(urlObj, d) {
   return true;
 }
 
-/** URLs a otros /c/*.js embebidas en el cuerpo del supertag (2.º paso de carga). */
 function referencedJsPattern(discovery) {
   const host = discovery.scriptHost.replace(/\./g, '\\.');
   return new RegExp(
@@ -125,9 +127,22 @@ function extractScriptSrcs(html) {
   return out;
 }
 
+// Fix 4: extrae el contenido de <script> sin atributo src
+function extractInlineScripts(html) {
+  const out = [];
+  const re = /<script\b(?![^>]*\bsrc\s*=\s*["'])[^>]*>([\s\S]*?)<\/script>/gi;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    const content = m[1].trim();
+    if (content.length > 0) out.push(content);
+  }
+  return out;
+}
+
 async function discoverEntries(discovery) {
   const seen = new Map();
   const stripQ = discovery.stripQuery !== false;
+  const pageInlineScripts = new Map(); // Fix 4: pageUrl → string[]
 
   for (const pageUrl of discovery.pages || []) {
     const res = await fetch(pageUrl, {
@@ -147,6 +162,10 @@ async function discoverEntries(discovery) {
     const html = await res.text();
     const hrefs = extractScriptSrcs(html);
     logVerbose(`discovery: ${pageUrl} → ${hrefs.length} <script src>`);
+
+    // Fix 4: guardar scripts inline de esta página
+    pageInlineScripts.set(pageUrl, extractInlineScripts(html));
+    logVerbose(`discovery: ${pageUrl} → ${pageInlineScripts.get(pageUrl).length} scripts inline`);
 
     for (const href of hrefs) {
       let abs;
@@ -168,7 +187,8 @@ async function discoverEntries(discovery) {
   }
 
   const fromHtml = [...seen.values()].sort((a, b) => a.id.localeCompare(b.id));
-  return expandWithReferencedScripts(fromHtml, discovery);
+  const entries = await expandWithReferencedScripts(fromHtml, discovery);
+  return { entries, pageInlineScripts };
 }
 
 function normalizeStaticEntry(raw) {
@@ -191,13 +211,18 @@ async function loadEntries() {
   const cfg = loadRawConfig();
 
   if (Array.isArray(cfg)) {
-    return cfg.map((e) => normalizeStaticEntry(e));
+    return {
+      entries: cfg.map((e) => normalizeStaticEntry(e)),
+      pageInlineScripts: new Map(),
+    };
   }
 
   const out = [];
+  let pageInlineScripts = new Map();
   if (cfg.discovery) {
-    const discovered = await discoverEntries(cfg.discovery);
+    const { entries: discovered, pageInlineScripts: pis } = await discoverEntries(cfg.discovery);
     out.push(...discovered);
+    pageInlineScripts = pis;
   }
   for (const s of cfg.staticUrls || []) {
     out.push(normalizeStaticEntry(s));
@@ -216,7 +241,10 @@ async function loadEntries() {
     }
     byId.set(e.id, e);
   }
-  return [...byId.values()].sort((a, b) => a.id.localeCompare(b.id));
+  return {
+    entries: [...byId.values()].sort((a, b) => a.id.localeCompare(b.id)),
+    pageInlineScripts,
+  };
 }
 
 function normalizeFetchUrl(entry) {
@@ -282,9 +310,12 @@ function jsCachePath(id) {
   return join(JS_CACHE_DIR, `${safeCacheBasename(id)}.js`);
 }
 
-/**
- * diff unificado (requiere `diff` en PATH: macOS/Linux; en Windows usar Git Bash/WSL).
- */
+// Fix 4: ruta de cache para script inline por página e índice
+function inlineCachePath(pageUrl, index) {
+  const safe = pageUrl.replace(/[^a-zA-Z0-9._-]/g, '_');
+  return join(JS_CACHE_DIR, `_inline_${safe}_${index}.js`);
+}
+
 function unifiedDiffText(oldText, newText) {
   const dir = mkdtempSync(join(tmpdir(), 'adzone-diff-'));
   const oldP = join(dir, 'old.js');
@@ -301,11 +332,8 @@ function unifiedDiffText(oldText, newText) {
     } catch (e) {
       if (e && typeof e.status === 'number') {
         if (e.status === 1 && e.stdout) {
-          let s = String(e.stdout).trimEnd();
-          if (s.length > MAX_DIFF_CHARS) {
-            s = `${s.slice(0, MAX_DIFF_CHARS)}\n... [diff truncado; ${e.stdout.length} caracteres totales]\n`;
-          }
-          return s;
+          // Fix 5: ya no truncamos aquí; appendChangeLogDiffBlock decide si va inline o a archivo
+          return String(e.stdout).trimEnd();
         }
         if (e.status === 0) return null;
       }
@@ -320,17 +348,32 @@ function unifiedDiffText(oldText, newText) {
   }
 }
 
+// Fix 5: diffs grandes van a logs/diffs/<id>-<stamp>.diff; los chicos siguen inline
 function appendChangeLogDiffBlock(id, diffText) {
-  const dir = join(ROOT, 'logs');
-  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  const p = join(dir, 'changes.log');
+  const logsDir = join(ROOT, 'logs');
+  if (!existsSync(logsDir)) mkdirSync(logsDir, { recursive: true });
+  const logPath = join(logsDir, 'changes.log');
   const stamp = new Date().toISOString();
-  appendFileSync(
-    p,
-    `[${stamp}] ${id}: diff unificado (anterior vs actual, vía \`diff -u\`):\n`,
-    'utf8'
-  );
-  appendFileSync(p, `${diffText}\n`, 'utf8');
+
+  if (diffText.length > DIFF_FILE_THRESHOLD) {
+    const diffDir = join(logsDir, 'diffs');
+    mkdirSync(diffDir, { recursive: true });
+    const safestamp = stamp.replace(/[:.]/g, '-');
+    const fname = `${safeCacheBasename(id)}-${safestamp}.diff`;
+    writeFileSync(join(diffDir, fname), diffText, 'utf8');
+    appendFileSync(
+      logPath,
+      `[${stamp}] ${id}: diff guardado en logs/diffs/${fname} (${diffText.length} chars)\n`,
+      'utf8'
+    );
+  } else {
+    appendFileSync(
+      logPath,
+      `[${stamp}] ${id}: diff unificado (anterior vs actual, vía \`diff -u\`):\n`,
+      'utf8'
+    );
+    appendFileSync(logPath, `${diffText}\n`, 'utf8');
+  }
 }
 
 function loadSnapshot() {
@@ -353,11 +396,6 @@ function appendChangeLog(lines) {
   }
 }
 
-/**
- * Elimina del log entradas con más de 1 año de antigüedad.
- * Agrupa las líneas por entrada (cada entrada arranca con un timestamp "[…]");
- * las líneas de continuación (contenido del diff) se asocian a la entrada anterior.
- */
 function pruneChangeLog() {
   const p = join(ROOT, 'logs', 'changes.log');
   if (!existsSync(p)) return;
@@ -368,14 +406,12 @@ function pruneChangeLog() {
   const cutoff = new Date();
   cutoff.setFullYear(cutoff.getFullYear() - 1);
 
-  // Separar líneas de cabecera (comentarios "#") del cuerpo
   let bodyStart = 0;
   while (bodyStart < lines.length && (lines[bodyStart].startsWith('#') || lines[bodyStart].trim() === '')) {
     bodyStart++;
   }
   const headerLines = lines.slice(0, bodyStart);
 
-  // Agrupar el resto en entradas: cada "[…]" abre una nueva; el resto son continuación
   const entries = [];
   let current = null;
   for (let i = bodyStart; i < lines.length; i++) {
@@ -464,10 +500,84 @@ function diffLines(id, prev, next) {
   return [`${id}: ${changes.join(' | ')}`];
 }
 
+// Fix 4: compara scripts inline de una página contra el snapshot anterior
+function processInlineScripts(pageUrl, currentContents, prevList, logLines) {
+  const currCount = currentContents.length;
+  const prevCount = prevList.length;
+
+  if (prevCount === 0 && currCount === 0) {
+    return { changed: false, nextList: [] };
+  }
+
+  // Primera vez que vemos scripts inline en esta página
+  if (prevCount === 0) {
+    const nextList = currentContents.map((content, i) => {
+      const h = sha256(Buffer.from(content, 'utf8'));
+      writeFileSync(inlineCachePath(pageUrl, i), content, 'utf8');
+      logLines.push(
+        `inline:${pageUrl}[${i}]: primera medición (baseline). bytes=${content.length} sha256=${h}`
+      );
+      return { sha256: h, bytes: content.length };
+    });
+    return { changed: true, nextList };
+  }
+
+  let changed = false;
+  if (prevCount !== currCount) {
+    logLines.push(
+      `inline:${pageUrl}: cantidad de scripts inline cambió ${prevCount} → ${currCount}`
+    );
+    changed = true;
+  }
+
+  const nextList = [];
+  const maxIdx = Math.max(prevCount, currCount);
+  for (let i = 0; i < maxIdx; i++) {
+    const content = currentContents[i];
+    const prev = prevList[i];
+
+    if (content === undefined) {
+      logLines.push(`inline:${pageUrl}[${i}]: ya no aparece`);
+      changed = true;
+      continue;
+    }
+
+    const h = sha256(Buffer.from(content, 'utf8'));
+    const record = { sha256: h, bytes: content.length };
+
+    if (!prev) {
+      writeFileSync(inlineCachePath(pageUrl, i), content, 'utf8');
+      logLines.push(
+        `inline:${pageUrl}[${i}]: nuevo script inline. bytes=${content.length} sha256=${h}`
+      );
+      changed = true;
+    } else if (prev.sha256 !== h) {
+      const cachePath = inlineCachePath(pageUrl, i);
+      const previousCached = existsSync(cachePath) ? readFileSync(cachePath, 'utf8') : null;
+      if (previousCached !== null && previousCached !== content) {
+        const diffText = unifiedDiffText(previousCached, content);
+        if (diffText) appendChangeLogDiffBlock(`inline:${pageUrl}[${i}]`, diffText);
+      }
+      writeFileSync(cachePath, content, 'utf8');
+      logLines.push(
+        `inline:${pageUrl}[${i}]: sha256 ${prev.sha256.slice(0, 16)}… → ${h.slice(0, 16)}… | bytes ${prev.bytes} → ${content.length}`
+      );
+      changed = true;
+    } else {
+      // Sin cambio, actualizar cache igual para tener la última copia
+      writeFileSync(inlineCachePath(pageUrl, i), content, 'utf8');
+    }
+
+    nextList.push(record);
+  }
+
+  return { changed, nextList };
+}
+
 async function main() {
-  let entries;
+  let entries, pageInlineScripts;
   try {
-    entries = await loadEntries();
+    ({ entries, pageInlineScripts } = await loadEntries());
   } catch (e) {
     console.error(
       'adzone-monitor:',
@@ -493,28 +603,45 @@ async function main() {
   const currentIds = new Set(entries.map((e) => e.id));
   const nextUrls = {};
 
+  // Fix 2: cargar contadores de misses del snapshot
+  const pendingRemoval = { ...(snapshot.pendingRemoval || {}) };
+  let pendingRemovalDirty = false;
+
   mkdirSync(JS_CACHE_DIR, { recursive: true });
 
+  // Fix 2: scripts no encontrados en esta ejecución
   for (const id of Object.keys(snapshot.urls || {})) {
     if (!currentIds.has(id)) {
-      const prev = snapshot.urls[id];
-      snapshotDirty = true;
-      logLines.push(
-        `${id}: ya no aparece enlazado desde la página (última url: ${prev?.fetchedUrl ?? prev?.configUrl ?? '—'})`
-      );
-      const stale = jsCachePath(id);
-      if (existsSync(stale)) {
-        try {
-          rmSync(stale);
-        } catch {
-          /* ignore */
-        }
+      const missCount = (pendingRemoval[id] || 0) + 1;
+      pendingRemoval[id] = missCount;
+      pendingRemovalDirty = true;
+
+      if (missCount >= MISS_THRESHOLD) {
+        const prev = snapshot.urls[id];
+        snapshotDirty = true;
+        logLines.push(
+          `${id}: ya no aparece enlazado desde la página (${missCount} ejecuciones consecutivas; última url: ${prev?.fetchedUrl ?? prev?.configUrl ?? '—'})`
+        );
+        delete pendingRemoval[id];
+        // Fix 1: NO borrar el cache — se conserva para poder difear si el script reaparece
+      } else {
+        // Mantener en snapshot mientras esperamos confirmación
+        nextUrls[id] = snapshot.urls[id];
+        logVerbose(`${id}: no aparece en esta ejecución (miss ${missCount}/${MISS_THRESHOLD}), esperando confirmación`);
       }
     }
   }
 
   for (const entry of entries) {
     const id = entry.id;
+
+    // Fix 2: resetear contador si el script reapareció
+    if (pendingRemoval[id]) {
+      delete pendingRemoval[id];
+      pendingRemovalDirty = true;
+      logVerbose(`${id}: reapareció, contador de misses reseteado`);
+    }
+
     let data;
     try {
       data = await probe(entry);
@@ -558,12 +685,25 @@ async function main() {
     logVerbose(id, record);
   }
 
+  // Fix 4: procesar scripts inline de cada página descubierta
+  const nextInlineScripts = { ...(snapshot.inlineScripts || {}) };
+  for (const [pageUrl, contents] of pageInlineScripts) {
+    const prevList = (snapshot.inlineScripts || {})[pageUrl] || [];
+    const { changed, nextList } = processInlineScripts(pageUrl, contents, prevList, logLines);
+    if (changed) {
+      snapshotDirty = true;
+      nextInlineScripts[pageUrl] = nextList;
+    }
+  }
+
   if (logLines.length > 0) {
     appendChangeLog(logLines);
   }
 
-  if (snapshotDirty) {
+  if (snapshotDirty || pendingRemovalDirty) {
     snapshot.urls = nextUrls;
+    snapshot.inlineScripts = nextInlineScripts;
+    snapshot.pendingRemoval = Object.keys(pendingRemoval).length > 0 ? pendingRemoval : undefined;
     snapshot.schemaVersion = 1;
     snapshot.updatedAt = new Date().toISOString();
     saveSnapshot(snapshot);
