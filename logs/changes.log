@@ -61,3 +61,21 @@
 ... [diff truncado; 239864 caracteres totales]
 
 [2026-05-26T22:56:43.672Z] 10003_adzone.25.01: sha256 4c0eaba647835924… → 1a86942d38ed003b… | bytes 119853 → 119881 | etag "5239bb5970853a1101e20f30dd219a82" → "33236e5cc06efd348f8a44e0f13d6c30" | lastModified Thu, 16 Apr 2026 12:44:09 GMT → Tue, 26 May 2026 21:22:37 GMT | hints {"commentV":"31","buildStamp":"2026-Apr-16 06:44:03"} → {"commentV":"32","buildStamp":"2026-May-26 15:22:31"}
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[0]: primera medición (baseline). bytes=18 sha256=e45f8680015cb5e242b19b50595b69c436f64beb8b773690e5eea0a94d4bc183
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[1]: primera medición (baseline). bytes=1544 sha256=2e391fcb185736bbccc2010b9d1644434147588134d3134b90772c8ff09d7d9f
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[2]: primera medición (baseline). bytes=195 sha256=66413819e52f0061e5415830592a44db3768ab23d3a034649c7f537a939a73f3
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[3]: primera medición (baseline). bytes=378 sha256=5b9808e5e70adee713b3a69903ca5d45fb3dbb480fe56effb1f81c1d83de04fb
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[4]: primera medición (baseline). bytes=22077 sha256=e5fbe8a98414519a9a575fa19cf9811eb88e32eb0847d61f985109929d6c8724
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[5]: primera medición (baseline). bytes=629 sha256=0021dd47a5f09a14ed58211c04fb7bfd147eba20676000bc1d30acd3284939d6
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[6]: primera medición (baseline). bytes=250 sha256=bd8e269309471f8240c21ef2223c0b71d0eee4567bc1426046b5c3b4a57e29eb
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[7]: primera medición (baseline). bytes=15202 sha256=6cfa671dbeee161ff36adf7bb827f65440b03762c25314c8e7dbc84e5ede248e
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[8]: primera medición (baseline). bytes=578 sha256=e02edf570e7575550ad55f65b5e2cdbafa32ff5a4300e44cd4fa9ccb159c8c6b
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[9]: primera medición (baseline). bytes=4655 sha256=b7769cc0eb6cb68c022f4e72535b6ba57ba5a7d0628480365e70e49331ac4244
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[10]: primera medición (baseline). bytes=276 sha256=dadd1f3d0def2a2fd4835e4069e518170573df1c92e6bd36295cc8e199c4cb67
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[11]: primera medición (baseline). bytes=338 sha256=892912dd3b4df4296cc074efd92602d590ca6ce807db9a150f114170d2c2b5e7
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[12]: primera medición (baseline). bytes=326 sha256=a665af99ac111c48e234ac70410f6be0c119fd16553916fd8c664f9c7e46f353
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[13]: primera medición (baseline). bytes=382 sha256=ec4758e64e8545cd0b46084b73da4ebfc733be9d29fb10a1eceef4eca205e678
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[14]: primera medición (baseline). bytes=4213 sha256=d11b14ddf2f6dc9c66bbbf05e1e085fbccca90f70e877db7bbdd0de8a58bbf49
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[15]: primera medición (baseline). bytes=245 sha256=80ebb7aad0a160ed29c9e1e4b2e66db028c2f862c05c750541739ddc3dd1eb76
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[16]: primera medición (baseline). bytes=319308 sha256=2070d164a7b8a54f27513ba18449661350a73a5176bb15881ca163ffc5ebb9d0
+[2026-06-08T20:35:49.096Z] inline:https://tn.com.ar/[17]: primera medición (baseline). bytes=127 sha256=cd61b50ea795ff2f84ee0cf53d132593cbf1bbd4821f9d618ef0aa2be1b706b1
