@@ -217,3 +217,12 @@
 [2026-06-09T15:28:30.141Z] inline:https://tn.com.ar/[13]: sha256 a8d585c4b9a67d51… → 5302a74f8fc31c1c… | bytes 417 → 417
 [2026-06-09T15:28:30.141Z] inline:https://tn.com.ar/[14]: sha256 bee8e16216df8b87… → 80cc0ff0012ac547… | bytes 4219 → 4218
 [2026-06-09T15:28:30.141Z] inline:https://tn.com.ar/[16]: sha256 2800de933214122d… → 0ad1e5626b0bd39d… | bytes 307446 → 310659
+[2026-06-09T20:21:14.484Z] inline:https://tn.com.ar/[6]: diff unificado (anterior vs actual, vía `diff -u`):
+--- /tmp/adzone-diff-A4FWTh/old.js	2026-06-09 20:21:14.470313045 +0000
++++ /tmp/adzone-diff-A4FWTh/new.js	2026-06-09 20:21:14.470313045 +0000
+@@ -1 +1 @@
+-if(!Array.prototype.includes||!(window.Object && window.Object.assign)||!window.Promise||!window.Symbol||!window.fetch){document.write('<script type="application/javascript" src="/pf/dist/engine/polyfill.js?d=689&mxId=00000000" defer=""><\/script>')}
+\ No newline at end of file
++if(!Array.prototype.includes||!(window.Object && window.Object.assign)||!window.Promise||!window.Symbol||!window.fetch){document.write('<script type="application/javascript" src="/pf/dist/engine/polyfill.js?d=690&mxId=00000000" defer=""><\/script>')}
+\ No newline at end of file
+[2026-06-09T20:21:14.485Z] inline:https://tn.com.ar/[6]: sha256 bd8e269309471f82… → 6025d9ce5c13cdcb… | bytes 250 → 250
