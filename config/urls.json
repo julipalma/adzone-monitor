@@ -4,7 +4,13 @@
     "scriptHost": "s1.adzonestatic.com",
     "pathIncludes": "/c/",
     "requireExtension": ".js",
-    "deepScanReferencedScripts": true
+    "deepScanReferencedScripts": true,
+    "ignoreInlinePatterns": [
+      "window.Fusion",
+      "BOOMR_mq",
+      "go-mpulse.net",
+      "schema.org"
+    ]
   },
   "staticUrls": []
 }

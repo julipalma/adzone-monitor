@@ -163,9 +163,14 @@ async function discoverEntries(discovery) {
     const hrefs = extractScriptSrcs(html);
     logVerbose(`discovery: ${pageUrl} → ${hrefs.length} <script src>`);
 
-    // Fix 4: guardar scripts inline de esta página
-    pageInlineScripts.set(pageUrl, extractInlineScripts(html));
-    logVerbose(`discovery: ${pageUrl} → ${pageInlineScripts.get(pageUrl).length} scripts inline`);
+    // Fix 4: guardar scripts inline de esta página (filtrando los ruidosos)
+    const ignorePatterns = discovery.ignoreInlinePatterns || [];
+    const allInline = extractInlineScripts(html);
+    const filteredInline = ignorePatterns.length > 0
+      ? allInline.filter(c => !ignorePatterns.some(p => c.includes(p)))
+      : allInline;
+    pageInlineScripts.set(pageUrl, filteredInline);
+    logVerbose(`discovery: ${pageUrl} → ${allInline.length} scripts inline (${filteredInline.length} tras filtrar)`);
 
     for (const href of hrefs) {
       let abs;
