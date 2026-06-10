@@ -5,12 +5,7 @@
     "pathIncludes": "/c/",
     "requireExtension": ".js",
     "deepScanReferencedScripts": true,
-    "ignoreInlinePatterns": [
-      "window.Fusion",
-      "BOOMR_mq",
-      "go-mpulse.net",
-      "schema.org"
-    ]
+    "monitorInlineScripts": false
   },
   "staticUrls": []
 }

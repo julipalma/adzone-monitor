@@ -1,1 +1,0 @@
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"TN","url":"https://play.google.com/store/apps/details?id=com.tn","operatingSystem":"ANDROID","applicationCategory":"CommunicationApplication","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.1","ratingCount":"28737"},"offers":{"@type":"Offer","price":0}}

@@ -1,1 +1,0 @@
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"TN","url":"https://itunes.apple.com/ar/app/tn/id391573980","operatingSystem":"iOS","applicationCategory":"CommunicationApplication","aggregateRating":{"@type":"AggregateRating","ratingValue":"3.2","ratingCount":"170"},"offers":{"@type":"Offer","price":0}}

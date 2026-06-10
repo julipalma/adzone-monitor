@@ -45,45 +45,5 @@
         "buildStamp": "2026-May-18 08:28:56"
       }
     }
-  },
-  "inlineScripts": {
-    "https://tn.com.ar/": [
-      {
-        "sha256": "e45f8680015cb5e242b19b50595b69c436f64beb8b773690e5eea0a94d4bc183",
-        "bytes": 18
-      },
-      {
-        "sha256": "2e391fcb185736bbccc2010b9d1644434147588134d3134b90772c8ff09d7d9f",
-        "bytes": 1544
-      },
-      {
-        "sha256": "66413819e52f0061e5415830592a44db3768ab23d3a034649c7f537a939a73f3",
-        "bytes": 195
-      },
-      {
-        "sha256": "5b9808e5e70adee713b3a69903ca5d45fb3dbb480fe56effb1f81c1d83de04fb",
-        "bytes": 378
-      },
-      {
-        "sha256": "e5fbe8a98414519a9a575fa19cf9811eb88e32eb0847d61f985109929d6c8724",
-        "bytes": 22077
-      },
-      {
-        "sha256": "0021dd47a5f09a14ed58211c04fb7bfd147eba20676000bc1d30acd3284939d6",
-        "bytes": 629
-      },
-      {
-        "sha256": "6025d9ce5c13cdcb38cd81056af94266657d78dc5c82fe04f89e0f077d769217",
-        "bytes": 250
-      },
-      {
-        "sha256": "80ebb7aad0a160ed29c9e1e4b2e66db028c2f862c05c750541739ddc3dd1eb76",
-        "bytes": 245
-      },
-      {
-        "sha256": "cd61b50ea795ff2f84ee0cf53d132593cbf1bbd4821f9d618ef0aa2be1b706b1",
-        "bytes": 127
-      }
-    ]
   }
 }
