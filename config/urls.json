@@ -1,6 +1,12 @@
 {
   "discovery": {
-    "pages": ["https://tn.com.ar/"],
+    "pages": [
+      "https://tn.com.ar/",
+      "https://tn.com.ar/deportes/",
+      "https://tn.com.ar/autos/",
+      "https://tn.com.ar/show/",
+      "https://tn.com.ar/deportes/futbol/2026/06/09/sampaoli-cumplira-su-sueno-de-dirigir-en-la-primera-division-argentina-sera-el-dt-de-talleres-de-cordoba/"
+    ],
     "scriptHost": "s1.adzonestatic.com",
     "pathIncludes": "/c/",
     "requireExtension": ".js",
