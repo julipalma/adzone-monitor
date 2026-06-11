@@ -296,3 +296,4 @@
 [2026-06-11T14:49:53.850Z] inline:https://tn.com.ar/[7]: sha256 1f3222823cbc35bf… → d9cd5e1a25ea1b65… | bytes 15391 → 15396
 [2026-06-11T14:49:53.850Z] inline:https://tn.com.ar/[14]: sha256 039be5d60c11712a… → b8baf00bcb442e24… | bytes 4214 → 4214
 [2026-06-11T14:49:53.850Z] inline:https://tn.com.ar/[16]: sha256 33480ff7c8ec3db6… → 626d1649398395fd… | bytes 283757 → 414227
+[2026-06-11T17:28:42.248Z] ads-txt: lastModified Thu, 11 Jun 2026 14:49:51 GMT → Thu, 11 Jun 2026 17:28:42 GMT
