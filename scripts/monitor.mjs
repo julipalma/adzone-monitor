@@ -463,8 +463,11 @@ function pruneChangeLog() {
   logVerbose(`pruneChangeLog: eliminadas ${pruned} entrada(s) anteriores al ${cutoff.toISOString().slice(0, 10)}`);
 }
 
-function semanticEqual(prev, next) {
+function semanticEqual(prev, next, entryType = 'js') {
   if (!prev) return false;
+  if (entryType === 'ads-txt') {
+    return prev.sha256 === next.sha256;
+  }
   return (
     prev.status === next.status &&
     prev.sha256 === next.sha256 &&
@@ -693,7 +696,7 @@ async function main() {
 
     const record = pickStableFields(data, entry);
     const prev = snapshot.urls[id];
-    if (!semanticEqual(prev, record)) {
+    if (!semanticEqual(prev, record, entry.type)) {
       snapshotDirty = true;
       logLines.push(...diffLines(id, prev, record));
       if (previousCached !== null && previousCached !== body && prev != null) {
