@@ -7,5 +7,12 @@
     "deepScanReferencedScripts": true,
     "monitorInlineScripts": false
   },
-  "staticUrls": []
+  "staticUrls": [
+    {
+      "id": "ads-txt",
+      "url": "https://tn.com.ar/ads.txt",
+      "type": "ads-txt",
+      "stripQuery": false
+    }
+  ]
 }

@@ -226,6 +226,53 @@ function formatChangeText(changeEv, diffEv) {
   return lines.join('\n');
 }
 
+// ── Ads.txt ────────────────────────────────────────────────────────────────────
+
+/** Extrae líneas agregadas y removidas de un diff -u de ads.txt. */
+function extractAdsTxtLines(diffBody) {
+  const added = [], removed = [];
+  for (const line of diffBody) {
+    if (!line || /^(---|\+\+\+|@@|\\)/.test(line)) continue;
+    if (line[0] === '+') added.push(line.slice(1).trim());
+    else if (line[0] === '-') removed.push(line.slice(1).trim());
+  }
+  return {
+    added: added.filter(Boolean),
+    removed: removed.filter(Boolean),
+  };
+}
+
+function formatAdsTxtAttachment(changeEv, diffEv) {
+  const { added, removed } = diffEv
+    ? extractAdsTxtLines(diffEv.body)
+    : { added: [], removed: [] };
+
+  const textLines = [`*\`ads.txt\` (tn.com.ar)*   ${formatDate(changeEv.ts)}`];
+
+  if (removed.length > 0) {
+    textLines.push(`*Eliminadas (${removed.length}):*`);
+    textLines.push(...removed.slice(0, 10).map(l => `— \`${l}\``));
+    if (removed.length > 10) textLines.push(`_… y ${removed.length - 10} más_`);
+  }
+
+  if (added.length > 0) {
+    textLines.push(`*Agregadas (${added.length}):*`);
+    textLines.push(...added.slice(0, 10).map(l => `+ \`${l}\``));
+    if (added.length > 10) textLines.push(`_… y ${added.length - 10} más_`);
+  }
+
+  if (added.length === 0 && removed.length === 0) {
+    textLines.push('_Cambio detectado (metadatos); sin líneas modificadas visibles._');
+  }
+
+  return {
+    color: '#f4a620',
+    blocks: [
+      { type: 'section', text: { type: 'mrkdwn', text: textLines.join('\n') } },
+    ],
+  };
+}
+
 // ── Main ───────────────────────────────────────────────────────────────────────
 
 let events = [];
@@ -241,14 +288,16 @@ const WINDOW = 35 * 60 * 1000;
 let recent   = events.filter(e => !isNaN(e.ts) && now - e.ts.getTime() < WINDOW);
 if (recent.length === 0) recent = events.slice(-20); // fallback para force_slack_test
 
-const changeEvts  = recent.filter(e => e.type === 'change');
-const diffByIdent = Object.fromEntries(
+const allChangeEvts = recent.filter(e => e.type === 'change');
+const changeEvts    = allChangeEvts.filter(e => e.id !== 'ads-txt');
+const adsTxtEvts    = allChangeEvts.filter(e => e.id === 'ads-txt');
+const diffByIdent   = Object.fromEntries(
   recent.filter(e => e.type === 'diff').map(e => [e.id, e])
 );
 
 const runUrl     = runId ? `${server}/${repo}/actions/runs/${runId}` : '';
 const hasErrors  = monitorOutcome === 'failure';
-const nChanges   = changeEvts.length;
+const nChanges   = changeEvts.length + adsTxtEvts.length;
 
 // ── Blocks ─────────────────────────────────────────────────────────────────────
 
@@ -309,16 +358,24 @@ if (runUrl) {
   });
 }
 
+// Attachments con color para ads.txt (barra lateral naranja)
+const attachments = adsTxtEvts.map(ev =>
+  formatAdsTxtAttachment(ev, diffByIdent[ev.id])
+);
+
 // ── Envío ──────────────────────────────────────────────────────────────────────
 
 const fallback = nChanges > 0
   ? `Adzone Monitor: ${nChanges} cambio(s) en ${repo}`
   : `Adzone Monitor: test de notificación — ${repo}`;
 
+const payload = { text: fallback, blocks };
+if (attachments.length > 0) payload.attachments = attachments;
+
 const res = await fetch(webhookUrl, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ text: fallback, blocks }),
+  body: JSON.stringify(payload),
 });
 
 if (!res.ok) {

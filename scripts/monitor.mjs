@@ -12,6 +12,7 @@ import {
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as prettier from 'prettier';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -206,7 +207,7 @@ function normalizeStaticEntry(raw) {
         return u;
       }
     })();
-  return { id, url: u, stripQuery: stripQ };
+  return { id, url: u, stripQuery: stripQ, type: raw.type || 'js' };
 }
 
 async function loadEntries() {
@@ -312,19 +313,42 @@ function jsCachePath(id) {
   return join(JS_CACHE_DIR, `${safeCacheBasename(id)}.js`);
 }
 
+function cacheFilePath(entry) {
+  const ext = entry.type === 'ads-txt' ? '.txt' : '.js';
+  return join(JS_CACHE_DIR, `${safeCacheBasename(entry.id)}${ext}`);
+}
+
 // Fix 4: ruta de cache para script inline por página e índice
 function inlineCachePath(pageUrl, index) {
   const safe = pageUrl.replace(/[^a-zA-Z0-9._-]/g, '_');
   return join(JS_CACHE_DIR, `_inline_${safe}_${index}.js`);
 }
 
-function unifiedDiffText(oldText, newText) {
+async function prettifyJs(code) {
+  try {
+    return await prettier.format(code, {
+      parser: 'babel',
+      printWidth: 120,
+      tabWidth: 2,
+      semi: true,
+      singleQuote: true,
+    });
+  } catch {
+    return code;
+  }
+}
+
+async function unifiedDiffText(oldText, newText, entryType = 'js') {
+  const pretty = entryType === 'js';
+  const [oldPretty, newPretty] = pretty
+    ? await Promise.all([prettifyJs(oldText), prettifyJs(newText)])
+    : [oldText, newText];
   const dir = mkdtempSync(join(tmpdir(), 'adzone-diff-'));
   const oldP = join(dir, 'old.js');
   const newP = join(dir, 'new.js');
   try {
-    writeFileSync(oldP, oldText, 'utf8');
-    writeFileSync(newP, newText, 'utf8');
+    writeFileSync(oldP, oldPretty, 'utf8');
+    writeFileSync(newP, newPretty, 'utf8');
     try {
       const out = execFileSync('diff', ['-u', oldP, newP], {
         encoding: 'utf8',
@@ -334,7 +358,6 @@ function unifiedDiffText(oldText, newText) {
     } catch (e) {
       if (e && typeof e.status === 'number') {
         if (e.status === 1 && e.stdout) {
-          // Fix 5: ya no truncamos aquí; appendChangeLogDiffBlock decide si va inline o a archivo
           return String(e.stdout).trimEnd();
         }
         if (e.status === 0) return null;
@@ -456,6 +479,7 @@ function semanticEqual(prev, next) {
 function pickStableFields(data, entry) {
   return {
     id: entry.id,
+    type: entry.type || 'js',
     configUrl: entry.url,
     fetchedUrl: data.urlFetched,
     status: data.status,
@@ -503,7 +527,7 @@ function diffLines(id, prev, next) {
 }
 
 // Fix 4: compara scripts inline de una página contra el snapshot anterior
-function processInlineScripts(pageUrl, currentContents, prevList, logLines) {
+async function processInlineScripts(pageUrl, currentContents, prevList, logLines) {
   const currCount = currentContents.length;
   const prevCount = prevList.length;
 
@@ -557,7 +581,7 @@ function processInlineScripts(pageUrl, currentContents, prevList, logLines) {
       const cachePath = inlineCachePath(pageUrl, i);
       const previousCached = existsSync(cachePath) ? readFileSync(cachePath, 'utf8') : null;
       if (previousCached !== null && previousCached !== content) {
-        const diffText = unifiedDiffText(previousCached, content);
+        const diffText = await unifiedDiffText(previousCached, content);
         if (diffText) appendChangeLogDiffBlock(`inline:${pageUrl}[${i}]`, diffText);
       }
       writeFileSync(cachePath, content, 'utf8');
@@ -662,7 +686,7 @@ async function main() {
     }
 
     const body = data.body;
-    const cachePath = jsCachePath(id);
+    const cachePath = cacheFilePath(entry);
     const previousCached = existsSync(cachePath)
       ? readFileSync(cachePath, 'utf8')
       : null;
@@ -673,7 +697,7 @@ async function main() {
       snapshotDirty = true;
       logLines.push(...diffLines(id, prev, record));
       if (previousCached !== null && previousCached !== body && prev != null) {
-        const diffText = unifiedDiffText(previousCached, body);
+        const diffText = await unifiedDiffText(previousCached, body, entry.type);
         if (diffText) {
           appendChangeLogDiffBlock(id, diffText);
         }
@@ -691,7 +715,7 @@ async function main() {
   const nextInlineScripts = { ...(snapshot.inlineScripts || {}) };
   for (const [pageUrl, contents] of pageInlineScripts) {
     const prevList = (snapshot.inlineScripts || {})[pageUrl] || [];
-    const { changed, nextList } = processInlineScripts(pageUrl, contents, prevList, logLines);
+    const { changed, nextList } = await processInlineScripts(pageUrl, contents, prevList, logLines);
     if (changed) {
       snapshotDirty = true;
       nextInlineScripts[pageUrl] = nextList;
