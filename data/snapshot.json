@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-01T20:29:28.087Z",
+  "updatedAt": "2026-07-07T17:44:43.150Z",
   "urls": {
     "10003_adzone.25.01": {
       "id": "10003_adzone.25.01",
@@ -32,17 +32,18 @@
     },
     "10011_tn-2023-01": {
       "id": "10011_tn-2023-01",
+      "type": "js",
       "configUrl": "https://s1.adzonestatic.com/c/10011_tn-2023-01.js",
       "fetchedUrl": "https://s1.adzonestatic.com/c/10011_tn-2023-01.js",
       "status": 200,
-      "sha256": "6a052498c19d3bb3b79285b45bfa95cc21cb368f14aa20f70a6938cf16761f56",
-      "bytes": 56296,
-      "etag": "\"0f748d7e3153889b62a917e49d48ce37\"",
-      "lastModified": "Mon, 18 May 2026 14:29:02 GMT",
+      "sha256": "f01fe97dfd3dc66f21920fb0c9f44ff5bddb85968ac82a1367b8734f008f41f0",
+      "bytes": 57663,
+      "etag": "\"7d61c942482e715fbd6cf8a6af355257\"",
+      "lastModified": "Tue, 07 Jul 2026 16:19:40 GMT",
       "hints": {
-        "commentV": "259",
-        "adzoneVersion": "259",
-        "buildStamp": "2026-May-18 08:28:56"
+        "commentV": "260",
+        "adzoneVersion": "260",
+        "buildStamp": "2026-Jul-07 10:19:35"
       }
     },
     "ads-txt": {

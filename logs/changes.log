@@ -365,3 +365,184 @@
  tremorhub.com,51vtw,DIRECT,1a4e959a1b50034a
  telaria.com,51vtw,DIRECT,1a4e959a1b50034a
 [2026-07-01T20:29:28.087Z] ads-txt: sha256 d2c912d0a02149af… → 8012533b25303004… | bytes 27796 → 28647 | etag W/"6c94-2ZiWrz6KBD5ZjfTaqX2dKP2wsYA" → W/"6fe7-X9HChHvIEWpTnSAl7yZ+37pReoQ" | lastModified Thu, 11 Jun 2026 17:28:42 GMT → Wed, 01 Jul 2026 20:29:28 GMT
+[2026-07-07T17:44:42.467Z] 10011_tn-2023-01: diff unificado (anterior vs actual, vía `diff -u`):
+--- /tmp/adzone-diff-sg3w3X/old.js	2026-07-07 17:44:42.452678073 +0000
++++ /tmp/adzone-diff-sg3w3X/new.js	2026-07-07 17:44:42.452678073 +0000
+@@ -1,6 +1,6 @@
+ // 10011_tn-2023-01
+-// v 259
+-// 2026-May-18 08:28:56
++// v 260
++// 2026-Jul-07 10:19:35
+ 
+ if (!adzone) {
+   var adzone = {};
+@@ -12,7 +12,7 @@
+   googletag.cmd = [];
+ }
+ adzone.start_time = new Date().getTime();
+-adzone.version = '259';
++adzone.version = '260';
+ adzone.supertag = 3;
+ adzone.c = [];
+ adzone.d = { requests: {} };
+@@ -472,7 +472,7 @@
+       a.run();
+     } else {
+       a.log.info('Normal Refresh slot', div_id);
+-      a.slots[div_id].slot.setTargeting('is_refresh', '1');
++      a.slots[div_id].slot.setConfig({ targeting: { is_refresh: '1' } });
+       if (div_id in adzone.s) {
+         delete adzone.s[div_id];
+       }
+@@ -604,16 +604,42 @@
+     a.log.info('RUN set_page_kv');
+     a.params.kv &&
+       Object.keys(a.params.kv).forEach(function (k, index) {
+-        let v = a.params.kv[k];
++        let v = a.clean_string(a.params.kv[k]);
+         a.params.kv_set[k] = v;
+-        v && v.length && googletag.pubads().setTargeting(k, v) && a.log.info('set_page_kv', k, v);
++        a.log.info('set_page_kv', k, v);
+       });
++    googletag.setConfig({ targeting: a.sanitize_kv(a.params.kv_set, { raw: false }) });
+     a.params.kv_raw = a.params.kv_raw || {};
+     a.params.kv_raw &&
+       Object.keys(a.params.kv_raw).forEach(function (k, index) {
+         let v = a.params.kv_raw[k];
+-        v && v.length && googletag.pubads().setTargeting(k, v) && a.log.info('set_page_kv_raw', k, v);
++        a.log.info('set_page_kv_raw', k, v);
+       });
++    googletag.setConfig({ targeting: a.sanitize_kv(a.params.kv_raw, { raw: true }) });
++  };
++  a.sanitize_kv = function (kv, params) {
++    kv = kv || {};
++    params = params || {};
++    params.raw = params.raw || false;
++    Object.keys(kv).forEach(function (key) {
++      let value = kv[key];
++      if (Array.isArray(value)) {
++        let new_list = [];
++        for (i = 0; i < value.length; i++) {
++          let v2 = a.clean_string(value[i] + '');
++          if (v2.length > 0) {
++            new_list.push(v2);
++          }
++        }
++        kv[key] = new_list;
++      } else {
++        kv[key] = a.clean_string(kv[key] + '');
++        if (kv[key].length == 0) {
++          delete kv[key];
++        }
++      }
++    });
++    return kv;
+   };
+   a.object_is_similar = (a, b) => {
+     if ((a === null && b === '') || (a === '' && b === null)) return true;
+@@ -866,10 +892,10 @@
+   a.set_slot_kv = function (div_id) {
+     a.slots[div_id].kv &&
+       Object.keys(a.slots[div_id].kv).forEach(function (j, index) {
+-        a.slots[div_id].slot.setTargeting(j, a.slots[div_id].kv[j]);
++        a.slots[div_id].slot.setConfig({ targeting: { [j]: a.slots[div_id].kv[j] } });
+       });
+     if (div_id.split('_pos_')[1]) {
+-      a.slots[div_id].slot.setTargeting('pos', div_id.split('_pos_')[1]);
++      a.slots[div_id].slot.setConfig({ targeting: { pos: div_id.split('_pos_')[1] } });
+     }
+   };
+   a.md5 = function (inputString) {
+@@ -1074,7 +1100,7 @@
+     a.slots_to_lazyload = [];
+     a.slot_names_to_lazyload = [];
+     if (a.lazy_load_set) {
+-      googletag.pubads().enableLazyLoad({ fetchMarginPercent: 15000, renderMarginPercent: 15000, mobileScaling: 1.0 });
++      googletag.setConfig({ lazyLoad: { fetchMarginPercent: 200, renderMarginPercent: 50, mobileScaling: 1.0 } });
+     }
+     a.set_page_kv();
+     if (a.params.fast_ad_slots && (a.params.run_level == 0 || a.params.run_level == 1)) {
+@@ -1137,10 +1163,10 @@
+     }
+     if (!a.services_enabled) {
+       a.services_enabled = true;
+-      a.params.set_centering && googletag.pubads().setCentering(true);
+-      googletag.pubads().disableInitialLoad();
++      a.params.set_centering && googletag.setConfig({ centering: true });
++      googletag.setConfig({ disableInitialLoad: true });
+       if (!googletag.pubadsReady) {
+-        googletag.pubads().enableSingleRequest();
++        googletag.setConfig({ singleRequest: true });
+         a.log.info('enable single request');
+       } else {
+         a.log.info('could not enable single request, as googletag.services were already enabled');
+@@ -1178,7 +1204,7 @@
+   a.set_lazy_load_slots = function (slot_names_to_lazyload) {
+     a.log.info('SET LAZYLOAD', a.slot_names_to_lazyload);
+     a.lazy_load_set = true;
+-    googletag.pubads().enableLazyLoad({ fetchMarginPercent: 200, renderMarginPercent: 50, mobileScaling: 1.0 });
++    googletag.setConfig({ lazyLoad: { fetchMarginPercent: 200, renderMarginPercent: 50, mobileScaling: 1.0 } });
+     for (let i = 0; i < a.slot_names_to_lazyload.length; i++) {
+       let div_id = a.slot_names_to_lazyload[i];
+       a.slots[div_id].slot = googletag
+@@ -1492,6 +1518,7 @@
+   adzone.attach_event_hook('ad_slot_ready', function (params) {
+     let div_id = params.div_id;
+     let d = document.getElementById(div_id);
++    d.dataset.is_original = 1;
+     if (
+       d &&
+       ![
+@@ -1511,6 +1538,33 @@
+         return;
+       }
+       d.dataset.lazyload = '1';
++      a.intervals = a.intervals || {};
++      a.original_slots = a.original_slots || {};
++      a.original_slots[d.id] = d;
++      a.timeouts = a.timeouts || {};
++      a.timeouts[d.id] && window.clearTimeout(a.timeouts[d.id]) && delete a.timeouts[d.id];
++      window.setTimeout(function () {
++        a.intervals[d.id] = window.setInterval(function () {
++          let slot_id = d.id;
++          if (
++            (!d.dataset.is_original && !adzone.original_slots[slot_id]) ||
++            !document.contains(adzone.original_slots[slot_id])
++          ) {
++            console.error('**** EL AD SLOT ', slot_id, ' FUE ELIMINADO Y VUELTO A CREAR ****');
++            a.original_slots[d.id] = document.getElementById(slot_id);
++            if (
++              document.getElementById(slot_id) &&
++              document.getElementById(slot_id).innerHTML &&
++              document.getElementById(slot_id).innerHTML != ''
++            ) {
++              return;
++            }
++            console.error('**** HACEMOS UNA NUEVA LLAMADA PARA ', slot_id, ' ****');
++            adzone.refresh_existing_slot(slot_id);
++            window.clearInterval(a.intervals[slot_id]);
++          }
++        }, 1000);
++      }, 3000);
+     }
+     if (document.location.href.includes('/deportes') || div_id == 'ad-slot-top') {
+       delete d.dataset.lazyload;
+@@ -1938,14 +1992,14 @@
+     ? window.addEventListener('message', adzone.m, !1)
+     : window.attachEvent && window.attachEvent('message', adzone.m);
+   fetch(
+-    'https://s1.adzonestatic.com/c/10003_adzone.25.01.js?a031' +
++    'https://s1.adzonestatic.com/c/10003_adzone.25.01.js?a032' +
+       Math.round(new Date().getTime() / 1000 / 60 / 60 / 24 / 7),
+     { mode: 'no-cors' },
+   )
+     .then(() => {
+       let s5 = document.createElement('script');
+       s5.src =
+-        'https://s1.adzonestatic.com/c/10003_adzone.25.01.js?a031' +
++        'https://s1.adzonestatic.com/c/10003_adzone.25.01.js?a032' +
+         Math.round(new Date().getTime() / 1000 / 60 / 60 / 24 / 7);
+       document.head.appendChild(s5);
+     })
+[2026-07-07T17:44:43.150Z] 10011_tn-2023-01: sha256 6a052498c19d3bb3… → f01fe97dfd3dc66f… | bytes 56296 → 57663 | etag "0f748d7e3153889b62a917e49d48ce37" → "7d61c942482e715fbd6cf8a6af355257" | lastModified Mon, 18 May 2026 14:29:02 GMT → Tue, 07 Jul 2026 16:19:40 GMT | hints {"commentV":"259","adzoneVersion":"259","buildStamp":"2026-May-18 08:28:56"} → {"commentV":"260","adzoneVersion":"260","buildStamp":"2026-Jul-07 10:19:35"}
