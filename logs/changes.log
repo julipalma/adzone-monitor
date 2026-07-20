@@ -1170,3 +1170,24 @@
  spotx.tv,71451,RESELLER,7842df1d2fe2db34
  spotxchange.com,71451,RESELLER,7842df1d2fe2db34
 [2026-07-13T19:51:21.432Z] ads-txt: sha256 8012533b25303004… → 6da85ee33e4bbc54… | bytes 28647 → 54988 | etag W/"6fe7-X9HChHvIEWpTnSAl7yZ+37pReoQ" → W/"d6cc-acJB29K4z1/1HnWyDmKs1SwcIWE" | lastModified Wed, 01 Jul 2026 20:29:28 GMT → Mon, 13 Jul 2026 19:51:21 GMT
+[2026-07-20T19:08:12.882Z] ads-txt: diff unificado (anterior vs actual, vía `diff -u`):
+--- /tmp/adzone-diff-FdNbGm/old.js	2026-07-20 19:08:12.868857428 +0000
++++ /tmp/adzone-diff-FdNbGm/new.js	2026-07-20 19:08:12.868857428 +0000
+@@ -1,4 +1,4 @@
+-#Actualizacion 13/07/2026
++#Actualizacion 20/07/2026
+ 
+ google.com,pub-5032399323662736,DIRECT,f08c47fec0942fa0
+ google.com,pub-6645642512809443,DIRECT,f08c47fec0942fa0
+@@ -143,6 +143,10 @@
+ tritondigital.com,141193,DIRECT,19b4454d0b87b58b
+ tritondigital.com,248053,DIRECT,19b4454d0b87b58b
+ embi-media.com,0621,DIRECT
++embi-media.com,0637,DIRECT
++embi-media.com,0638,DIRECT
++embi-media.com,0639,DIRECT
++embi-media.com,0640,DIRECT
+ google.com,pub-7563003856700220,DIRECT,f08c47fec0942fa0
+ google.com,pub-2768830610135793,DIRECT,f08c47fec0942fa0
+ google.com,pub-8876086160451993,DIRECT,f08c47fec0942fa0
+[2026-07-20T19:08:12.882Z] ads-txt: sha256 6da85ee33e4bbc54… → 94ac8f488edf358b… | bytes 54988 → 55096 | etag W/"d6cc-acJB29K4z1/1HnWyDmKs1SwcIWE" → W/"d738-fIRMhQjxjEWO7jL0RgowHdotcYc" | lastModified Mon, 13 Jul 2026 19:51:21 GMT → Mon, 20 Jul 2026 19:08:12 GMT

@@ -1,4 +1,4 @@
-#Actualizacion 13/07/2026
+#Actualizacion 20/07/2026
 
 google.com,pub-5032399323662736,DIRECT,f08c47fec0942fa0
 google.com,pub-6645642512809443,DIRECT,f08c47fec0942fa0
@@ -143,6 +143,10 @@ openx.com,562691971,RESELLER,6a698e2ec38604c6
 tritondigital.com,141193,DIRECT,19b4454d0b87b58b
 tritondigital.com,248053,DIRECT,19b4454d0b87b58b
 embi-media.com,0621,DIRECT
+embi-media.com,0637,DIRECT
+embi-media.com,0638,DIRECT
+embi-media.com,0639,DIRECT
+embi-media.com,0640,DIRECT
 google.com,pub-7563003856700220,DIRECT,f08c47fec0942fa0
 google.com,pub-2768830610135793,DIRECT,f08c47fec0942fa0
 google.com,pub-8876086160451993,DIRECT,f08c47fec0942fa0
