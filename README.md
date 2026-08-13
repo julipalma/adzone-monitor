@@ -1,6 +1,6 @@
 # adzone-monitor
 
-Monitoreo periódico de los JavaScript estáticos de **Adzone** en TN. Ya no hace falta listar a mano cada nombre de archivo: el monitor **descubre** los `<script src="…">` que apuntan al CDN configurado (por defecto `s1.adzonestatic.com` bajo `/c/`), y opcionalmente **escanea el cuerpo** de esos scripts para encontrar URLs adicionales que el supertag carga en un segundo paso.
+Monitoreo periódico de los JavaScript estáticos de **Adzone** en TN. Ya no hace falta listar a mano cada nombre de archivo: el monitor **descubre** los `<script src="…">` que apuntan al CDN configurado (por defecto `s1.adzonestatic.com` bajo `/c/`), y opcionalmente **escanea el cuerpo** de esos scripts para encontrar URLs adicionales que se cargan dinámicamente — repitiendo el escaneo sobre cada script nuevo que aparece, no solo un paso, para no dejar sin vigilar a los scripts que el proveedor referencia "en cadena" desde otro script propio.
 
 Compara cada ejecución con el **snapshot anterior** (status, tamaño, `sha256`, `ETag`, `Last-Modified` y pistas de versión en el propio `.js`).
 
@@ -16,7 +16,8 @@ Objeto con:
 | `discovery.scriptHost` | Host del CDN (p. ej. `s1.adzonestatic.com`). |
 | `discovery.pathIncludes` | Solo rutas que contengan este fragmento (p. ej. `/c/`). |
 | `discovery.requireExtension` | Sufijo requerido (p. ej. `.js`). |
-| `discovery.deepScanReferencedScripts` | Si es `true`, tras los scripts del HTML se leen esos `.js` y se añaden más URLs del mismo host que aparezcan como texto. Por defecto conviene `false` si solo querés el script que TN incluye directo en el HTML. |
+| `discovery.deepScanReferencedScripts` | Si es `true`, se leen los `.js` descubiertos y se añaden más URLs del mismo host que aparezcan como texto — y esto se repite recursivamente sobre cada script nuevo hasta que no aparezcan más referencias (o se llegue a `deepScanMaxDepth`). Así se detectan también scripts que un script del proveedor carga dinámicamente (no solo los que están directo en el HTML). Por defecto conviene `false` si solo querés el script que TN incluye directo en el HTML. |
+| `discovery.deepScanMaxDepth` | Cuántos saltos de recursión permite el deep scan (por defecto `5`). Es una salvaguarda ante ciclos o cadenas de referencias inesperadamente largas; en `--verbose` se avisa si se llegó al límite. |
 | `discovery.stripQuery` | Si es `false`, se conserva query string; por defecto se **ignora** (cache-bust). |
 | `staticUrls` | Lista opcional de `{ "url": "…", "id": "…?", "stripQuery": true }` para scripts que **no** salgan del HTML ni del deep scan. |
 

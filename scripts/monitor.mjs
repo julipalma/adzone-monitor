@@ -72,6 +72,14 @@ function referencedJsPattern(discovery) {
   );
 }
 
+// Fix 6: expandWithReferencedScripts es ahora recursivo (BFS), no de un solo nivel.
+// Antes solo se escaneaba el cuerpo de los scripts que venían del HTML (los "seeds"),
+// así que un script cargado dinámicamente por otro script del proveedor (p. ej. el
+// supertag que carga adzone.25.01.js, que a su vez carga parallax-video2.js) quedaba
+// fuera del inventario. Ahora cada script recién descubierto también se escanea, y
+// así sucesivamente hasta que no aparezcan referencias nuevas o se llegue al límite
+// de profundidad (discovery.deepScanMaxDepth, por defecto 5) como salvaguarda ante
+// ciclos o cadenas de referencias inesperadamente largas.
 async function expandWithReferencedScripts(seedEntries, discovery) {
   if (discovery.deepScanReferencedScripts === false) {
     return seedEntries;
@@ -79,40 +87,64 @@ async function expandWithReferencedScripts(seedEntries, discovery) {
   const stripQ = discovery.stripQuery !== false;
   const byKey = new Map(seedEntries.map((e) => [normalizeFetchUrl(e), e]));
   const refRe = referencedJsPattern(discovery);
+  const maxDepth = discovery.deepScanMaxDepth ?? 5;
 
-  for (const entry of seedEntries) {
-    const url = normalizeFetchUrl(entry);
-    const res = await fetch(url, {
-      redirect: 'follow',
-      headers: {
-        'User-Agent':
-          'adzone-monitor/1.0 (deep scan; GitHub Actions)',
-      },
-    });
-    if (!res.ok) {
-      logVerbose(`deepScan: omito ${url} (HTTP ${res.status})`);
-      continue;
-    }
-    const text = await res.text();
-    const re = new RegExp(refRe.source, refRe.flags);
-    let m;
-    while ((m = re.exec(text)) !== null) {
-      let abs;
+  let frontier = seedEntries;
+  let depth = 0;
+
+  while (frontier.length > 0 && depth < maxDepth) {
+    const nextFrontier = [];
+
+    for (const entry of frontier) {
+      const url = normalizeFetchUrl(entry);
+      let res;
       try {
-        abs = new URL(m[0]);
-      } catch {
+        res = await fetch(url, {
+          redirect: 'follow',
+          headers: {
+            'User-Agent':
+              'adzone-monitor/1.0 (deep scan; GitHub Actions)',
+          },
+        });
+      } catch (e) {
+        logVerbose(`deepScan: error al pedir ${url}: ${e instanceof Error ? e.message : e}`);
         continue;
       }
-      if (stripQ) abs.search = '';
-      if (!matchesDiscovery(abs, discovery)) continue;
-      const key = abs.toString();
-      if (byKey.has(key)) continue;
-      const ent = entryFromAbsoluteUrl(key, stripQ);
-      if (ent) {
-        byKey.set(key, ent);
-        logVerbose(`  (referenciado en JS) + ${ent.id} ← ${key}`);
+      if (!res.ok) {
+        logVerbose(`deepScan: omito ${url} (HTTP ${res.status})`);
+        continue;
+      }
+      const text = await res.text();
+      const re = new RegExp(refRe.source, refRe.flags);
+      let m;
+      while ((m = re.exec(text)) !== null) {
+        let abs;
+        try {
+          abs = new URL(m[0]);
+        } catch {
+          continue;
+        }
+        if (stripQ) abs.search = '';
+        if (!matchesDiscovery(abs, discovery)) continue;
+        const key = abs.toString();
+        if (byKey.has(key)) continue;
+        const ent = entryFromAbsoluteUrl(key, stripQ);
+        if (ent) {
+          byKey.set(key, ent);
+          nextFrontier.push(ent);
+          logVerbose(`  (referenciado en JS, profundidad ${depth + 1}) + ${ent.id} ← ${key}`);
+        }
       }
     }
+
+    frontier = nextFrontier;
+    depth++;
+  }
+
+  if (frontier.length > 0 && depth >= maxDepth) {
+    logVerbose(
+      `deepScan: se alcanzó el límite de profundidad (${maxDepth}); puede haber scripts sin descubrir`
+    );
   }
 
   return [...byKey.values()].sort((a, b) => a.id.localeCompare(b.id));
