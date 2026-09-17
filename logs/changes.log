@@ -1302,3 +1302,71 @@
 [2026-08-13T15:25:24.175Z] 10003_parallax-video2: primera medición (baseline). status=200 bytes=11501 sha256=5b4f88b541bd316b933854a375281c8aee6a3cf70e032f0469cb0025bfc0d9f5 etag="4ca922cb7763e9ecc76d91d297a6f32b" lastModified=Tue, 11 Aug 2026 22:03:49 GMT hints={"commentV":"3","buildStamp":"2026-Aug-11 16:03:44"}
 [2026-08-13T15:25:24.175Z] 10003_video-fluid: primera medición (baseline). status=200 bytes=34082 sha256=f459a5119851d1e7a825224e2768cd8d5f526cefecf3c99257dad49526f205c8 etag="c3630180ea6a9c1c34d07bb040fd8ad0" lastModified=Fri, 06 Feb 2026 19:54:47 GMT hints={"commentV":"3","buildStamp":"2026-Feb-06 13:54:42"}
 [2026-08-13T15:25:24.175Z] 10003_video-itt-fs-tag9: primera medición (baseline). status=200 bytes=45868 sha256=571f13a37159c9564cde8d05fc19d9582cd9d495d66c633d0394cf2e4f965012 etag="035c5ac1c8230fa91657d350ba933021" lastModified=Fri, 06 Feb 2026 04:25:05 GMT hints={"commentV":"42","buildStamp":"2026-Feb-05 22:25:00"}
+[2026-09-17T20:21:03.661Z] ads-txt: diff unificado (anterior vs actual, vía `diff -u`):
+--- /tmp/adzone-diff-rchn63/old.js	2026-09-17 20:21:03.653944299 +0000
++++ /tmp/adzone-diff-rchn63/new.js	2026-09-17 20:21:03.653944299 +0000
+@@ -1,4 +1,4 @@
+-#Actualizacion 06/08/2026
++#Actualizacion 17/09/2026
+ 
+ google.com,pub-5032399323662736,DIRECT,f08c47fec0942fa0
+ google.com,pub-6645642512809443,DIRECT,f08c47fec0942fa0
+@@ -117,6 +117,57 @@
+ appnexus.com,13099,RESELLER,f5ab79cb980f11d1
+ pubmatic.com,161593,RESELLER,5d62403b186f2ace
+ rubiconproject.com,11006,RESELLER,0bfd66d529a55807
++truvid.com,2673,DIRECT
++truvid.com,1016268,DIRECT
++audioboost.com,2673,DIRECT
++audioboost.com,1016268,DIRECT
++google.com,pub-6322541192886560,RESELLER,f08c47fec0942fa0
++google.com,pub-8787923930478618,RESELLER,f08c47fec0942fa0
++google.com,pub-4311296694193702,RESELLER,f08c47fec0942fa0
++copper6.com,766197,RESELLER
++aps.amazon.com,d4004b5f-4fb6-4be2-82ae-0e36b8f52c12,RESELLER,4582cc3fa09ce42f
++rubiconproject.com,17412,RESELLER,0bfd66d529a55807
++rubiconproject.com,22656,RESELLER,0bfd66d529a55807
++inmobi.com,8af6323ce16b4717b930742b6c9911cd,RESELLER,83e75a7ae333ca9d
++pubmatic.com,159625,RESELLER,5d62403b186f2ace
++pubmatic.com,160851,RESELLER,5d62403b186f2ace
++pubmatic.com,166164,RESELLER,5d62403b186f2ace
++pubmatic.com,167031,RESELLER,5d62403b186f2ace
++pubmatic.com,161193,RESELLER,5d62403b186f2ace
++smartadserver.com,3356,RESELLER,060d053dcf45cbf3
++smartadserver.com,3356-OB,RESELLER,060d053dcf45cbf3
++sharethrough.com,3356,RESELLER,d53b998a7bd4ecd2
++sharethrough.com,3356-OB,RESELLER,d53b998a7bd4ecd2
++indexexchange.com,195373,RESELLER,50b1c356f2c5c8fc
++indexexchange.com,199307,RESELLER,50b1c356f2c5c8fc
++media.net,8CUB1WH75,RESELLER,818f58666cabc936
++adingo.jp,27254,RESELLER
++onetag.com,5e3dd7d316d2430,RESELLER,0bfd66d529a55807
++inmobi.com,eea6e7d8efb24f40999600e94b0ff1e6,RESELLER,83e75a7ae333ca9d
++contextweb.com,562049,RESELLER,89ff185a4c4e857c
++pubmatic.com,160048,RESELLER,5d62403b186f2ace
++pubmatic.com,157840,RESELLER,5d62403b186f2ace
++pubmatic.com,156971,RESELLER,5d62403b186f2ace
++pubmatic.com,156078,RESELLER,5d62403b186f2ace
++pubmatic.com,133799,RESELLER,5d62403b186f2ace
++indexexchange.com,184626,RESELLER,50b1c356f2c5c8fc
++indexexchange.com,183875,RESELLER,50b1c356f2c5c8fc
++contextweb.com,562258,RESELLER,89ff185a4c4e857c
++pubmatic.com,156439,RESELLER,5d62403b186f2ace
++pubmatic.com,154037,RESELLER,5d62403b186f2ace
++indexexchange.com,182257,RESELLER,50b1c356f2c5c8fc
++improvedigital.com,2621,RESELLER
++adform.com,3076,RESELLER,9f5210a2f0999e32
++video.unrulymedia.com,708556444,RESELLER,98c21ef9a666c68b
++smaato.com,1100047589,RESELLER,07bcf65f187117b4
++appnexus.com,6849,RESELLER,f5ab79cb980f11d1
++xad.com,963,RESELLER,81cbf0a75a5e0e9a
++lijit.com,502252,RESELLER,fafdf38b16bf6b2b
++lijit.com,502252-eb,RESELLER,fafdf38b16bf6b2b
++opera.com,pub10014056052800,RESELLER,55a0c5fd61378de3
++rubiconproject.com,28105,RESELLER,0bfd66d529a55807
++smartadserver.com,5960-OB,RESELLER,060d053dcf45cbf3
++sharethrough.com,5960-OB,RESELLER,060d053dcf45cbf3
+ numatec.com,113951150,DIRECT,f08c47fec0942fa0
+ google.com,pub-7747436378556651,RESELLER,f08c47fec0942fa0
+ appnexus.com,8774,RESELLER,f5ab79cb980f11d1
+[2026-09-17T20:21:03.661Z] ads-txt: sha256 b548cd25ae791436… → dcb2db4f27f879b5… | bytes 55435 → 57850 | etag W/"d88b-FqpB68RdcofnQVy3Rknu2MmokDw" → W/"e1fa-QDoQSr4Brp/YhMwOjBFq5nILoPc" | lastModified Thu, 06 Aug 2026 15:00:18 GMT → Thu, 17 Sep 2026 20:21:03 GMT
