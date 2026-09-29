@@ -1,4 +1,4 @@
-#Actualizacion 25/09/2026
+#Actualizacion 29/09/2026
 
 google.com,pub-5032399323662736,DIRECT,f08c47fec0942fa0
 google.com,pub-6645642512809443,DIRECT,f08c47fec0942fa0
@@ -1264,25 +1264,35 @@ conversantmedia.com,100693,RESELLER,03113cd04947736d
 improvedigital.com,2556,RESELLER
 seedtag.com,62c75855730cbc08002e17cb,DIRECT
 lijit.com,397546,DIRECT,fafdf38b16bf6b2b
-onetag.com,75601b04186d260,DIRECT
-xandr.com,4009,DIRECT,f5ab79cb980f11d1
-smartadserver.com,3050,DIRECT
-pubmatic.com,157743,DIRECT,5d62403b186f2ace
-rubiconproject.com,17280,DIRECT,0bfd66d529a55807
-improvedigital.com,1680,DIRECT
-adyoulike.com,83d15ef72d387a1e60e5a1399a2b0c03,DIRECT,4ad745ead2958bf7
-sharethrough.com,AXS5NfBr,DIRECT,d53b998a7bd4ecd2
-pubmatic.com,156212,RESELLER,5d62403b186f2ace
 rubiconproject.com,17960,RESELLER,0bfd66d529a55807
+pubmatic.com,156212,RESELLER,5d62403b186f2ace
+onetag.com,75601b04186d260,DIRECT,0bfd66d529a55807
+xandr.com,4009,DIRECT,f5ab79cb980f11d1
+smartadserver.com,3050,DIRECT,060d053dcf45cbf3
 rubiconproject.com,16114,RESELLER,0bfd66d529a55807
 openx.com,537149888,RESELLER,6a698e2ec38604c6
-loopme.com,5679,RESELLER,6c8d5f95897a5a3b
-adform.com,1889,RESELLER
-openx.com,558758631,RESELLER,6a698e2ec38604c6
-loopme.com,11712,RESELLER,6c8d5f95897a5a3b
-video.unrulymedia.com,724823153,RESELLER
-richaudience.com,ns9qrKJLKD,DIRECT
+sharethrough.com,3050,RESELLER,d53b998a7bd4ecd2
 sharethrough.com,AXS5NfBr,DIRECT,d53b998a7bd4ecd2
+loopme.com,5679,RESELLER,6c8d5f95897a5a3b
+pubmatic.com,157743,DIRECT,5d62403b186f2ace
+rubiconproject.com,17280,DIRECT,0bfd66d529a55807
+adform.com,1889,RESELLER,9f5210a2f0999e32
+improvedigital.com,1680,DIRECT
+openx.com,558758631,RESELLER,6a698e2ec38604c6
+adyoulike.com,83d15ef72d387a1e60e5a1399a2b0c03,DIRECT,4ad745ead2958bf7
+loopme.com,11712,RESELLER,6c8d5f95897a5a3b
+video.unrulymedia.com,724823153,RESELLER,a670c89d4a324e47
+dauup.com,34142,RESELLER,4daba13e2b0dfd92
+bold-win.com,1080,RESELLER,71746737d0bab951
+axonix.com,59143,RESELLER,bc385f2b4a87b721
+krushmedia.com,AJxF6R572a9M6CaTvK,RESELLER,f0220652b4aaebdc
+video.unrulymedia.com,1566669042,RESELLER,a670c89d4a324e47
+inmobi.com,b01aa06531c543d8a5fb9982f60afb00,RESELLER,83e75a7ae333ca9d
+opera.com,pub10014056052800,RESELLER,55a0c5fd61378de3
+bidmachine.io,1201,RESELLER
+thunder-monetize.com,9630185716,RESELLER
+programmaticx.ai,100464,RESELLER,b42d42eb28400efa
+richaudience.com,ns9qrKJLKD,DIRECT
 taboola.com,1463916,DIRECT,c228e6794e811952
 spotx.tv,71451,RESELLER,7842df1d2fe2db34
 spotxchange.com,71451,RESELLER,7842df1d2fe2db34
