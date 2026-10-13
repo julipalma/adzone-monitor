@@ -1447,3 +1447,38 @@
  spotx.tv,71451,RESELLER,7842df1d2fe2db34
  spotxchange.com,71451,RESELLER,7842df1d2fe2db34
 [2026-09-29T22:40:25.795Z] ads-txt: sha256 cd94dbb67b952496… → 69c1d94740e6610b… | bytes 57906 → 58463 | etag W/"e232-QjpiCfBdSkmTZTnx7BEkVHM4me0" → W/"e45f-/aWGhcQgdRDbD37CVaOV/JSCdt0" | lastModified Fri, 25 Sep 2026 18:39:27 GMT → Tue, 29 Sep 2026 22:38:51 GMT
+[2026-10-13T17:08:52.155Z] ads-txt: diff unificado (anterior vs actual, vía `diff -u`):
+--- /tmp/adzone-diff-jvz03m/old.js	2026-10-13 17:08:52.147817617 +0000
++++ /tmp/adzone-diff-jvz03m/new.js	2026-10-13 17:08:52.147817617 +0000
+@@ -1,4 +1,4 @@
+-#Actualizacion 29/09/2026
++#Actualizacion 13/10/2026
+ 
+ google.com,pub-5032399323662736,DIRECT,f08c47fec0942fa0
+ google.com,pub-6645642512809443,DIRECT,f08c47fec0942fa0
+@@ -67,6 +67,24 @@
+ triplelift.com,10220,DIRECT,6c33edb13117fd86
+ triplelift.com,10220-EB,DIRECT,6c33edb13117fd86
+ adingo.jp,26188,RESELLER
++adkaora.com,1673,DIRECT
++google.com,pub-5906247292784018,RESELLER,f08c47fec0942fa0
++pubmatic.com,158038,RESELLER,5d62403b186f2ace
++pubmatic.com,159113,RESELLER,5d62403b186f2ace
++pubmatic.com,163081,RESELLER,5d62403b186f2ace
++openx.com,540447814,RESELLER,6a698e2ec38604c6
++openx.com,556878050,RESELLER,6a698e2ec38604c6
++rubiconproject.com,21600,RESELLER,0bfd66d529a55807
++smartadserver.com,3611,RESELLER,060d053dcf45cbf3
++appnexus.com,11767,RESELLER,f5ab79cb980f11d1
++themediagrid.com,VG5JY1,RESELLER,9fac4a4a87c2a44f
++indexexchange.com,189433,RESELLER,50b1c356f2c5c8fc
++indexexchange.com,191792,RESELLER,50b1c356f2c5c8fc
++indexexchange.com,206284,RESELLER,50b1c356f2c5c8fc
++aps.amazon.com,5123,DIRECT,4582cc3fa09ce42f
++sharethrough.com,42xrI9sQ,RESELLER,d53b998a7bd4ecd2
++sharethrough.com,3611,RESELLER,d53b998a7bd4ecd2
++rtbhouse.com,SVD2r5gUFAzBORmXyKG5,RESELLER,4f3b94578e85950c
+ excellenceadvertising.com,113951150,DIRECT
+ google.com,pub-9959730754038026,RESELLER,f08c47fec0942fa0
+ rubiconproject.com,24082,RESELLER,0bfd66d529a55807
+[2026-10-13T17:08:52.155Z] ads-txt: sha256 69c1d94740e6610b… → 7f414d603b4792b1… | bytes 58463 → 59327 | etag W/"e45f-/aWGhcQgdRDbD37CVaOV/JSCdt0" → W/"e7bf-W0ZgYSpmzKUg4rMCCvJIgEqNq4g" | lastModified Tue, 29 Sep 2026 22:38:51 GMT → Tue, 13 Oct 2026 17:08:52 GMT
