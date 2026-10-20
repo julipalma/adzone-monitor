@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-19T15:40:08.047Z",
+  "updatedAt": "2026-10-20T19:18:43.076Z",
   "urls": {
     "10003_adzone.25.01": {
       "id": "10003_adzone.25.01",
@@ -128,10 +128,10 @@
       "configUrl": "https://tn.com.ar/ads.txt",
       "fetchedUrl": "https://tn.com.ar/ads.txt",
       "status": 200,
-      "sha256": "57649e1569e99b600625659249135a2edf8dea45c7ed3bd69a649a65625c0e1f",
-      "bytes": 71029,
-      "etag": "W/\"11575-d3+Sw2TzT64g8CCPItwb0oy7Xk4\"",
-      "lastModified": "Thu, 15 Oct 2026 18:39:28 GMT",
+      "sha256": "6069371a767aa5235c36d04e001dc2a0084ac0cadecd15cf7194a42c6aefb7dd",
+      "bytes": 43003,
+      "etag": "W/\"a7fb-ioMy8v9b93Opfypi1jy1PwsLpmM\"",
+      "lastModified": "Tue, 20 Oct 2026 19:18:07 GMT",
       "hints": {}
     }
   },
