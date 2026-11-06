@@ -2929,3 +2929,473 @@
  tremorhub.com,51vtw,DIRECT,1a4e959a1b50034a
  telaria.com,51vtw,DIRECT,1a4e959a1b50034a
 [2026-10-20T19:18:43.076Z] ads-txt: sha256 57649e1569e99b60… → 6069371a767aa523… | bytes 71029 → 43003 | etag W/"11575-d3+Sw2TzT64g8CCPItwb0oy7Xk4" → W/"a7fb-ioMy8v9b93Opfypi1jy1PwsLpmM" | lastModified Thu, 15 Oct 2026 18:39:28 GMT → Tue, 20 Oct 2026 19:18:07 GMT
+[2026-11-06T18:30:26.509Z] 10003_adzone.25.01: diff unificado (anterior vs actual, vía `diff -u`):
+--- /tmp/adzone-diff-fOscJ2/old.js	2026-11-06 18:30:26.498895144 +0000
++++ /tmp/adzone-diff-fOscJ2/new.js	2026-11-06 18:30:26.498895144 +0000
+@@ -1,8 +1,8 @@
+ // 10003_adzone.25.01
+-// v 34
+-// 2026-Oct-19 07:47:37
++// v 35
++// 2026-Nov-06 06:44:07
+ 
+-// v34
++// v35
+ 
+ !(function (e) {
+   if (
+@@ -151,7 +151,7 @@
+           } catch (t) {
+             e.e.data[i].page_keys = '{}';
+           }
+-          var a = {
++          var s = {
+             ad_unit_path: t.slot.getAdUnitPath(),
+             size: t.size && t.size[1] ? t.size[0] + 'x' + t.size[1] : t.campaignId ? 'N/A' : 'unfilled',
+             advertiser_id: t.advertiserId || '',
+@@ -170,8 +170,8 @@
+           };
+           (document.getElementById(o) &&
+             document.getElementById(o).dataset.adtype &&
+-            (a.ad_type = document.getElementById(o).dataset.adtype),
+-            e.e.data[i].events.push(a));
++            (s.ad_type = document.getElementById(o).dataset.adtype),
++            e.e.data[i].events.push(s));
+         }
+         if (t.slot.getOutOfPage());
+         else {
+@@ -193,12 +193,12 @@
+         }
+         if (((adzone.preview = !1), document.location.href.indexOf('adzone-preview') > 0))
+           try {
+-            var s = new URLSearchParams(window.location.search).get('adzone-preview');
+-            s &&
++            var a = new URLSearchParams(window.location.search).get('adzone-preview');
++            a &&
+               (adzone.preview = {
+-                file: s,
+-                width: s.split('_')[3].split('x')[0],
+-                height: s.split('_')[3].split('x')[1],
++                file: a,
++                width: a.split('_')[3].split('x')[0],
++                height: a.split('_')[3].split('x')[1],
+               });
+             try {
+               for (var l = t.slot.getSizes(), r = !1, p = 0; p < l.length; p++) {
+@@ -295,9 +295,9 @@
+                   i.t && i.s && !d && ('..' + o).toLowerCase().indexOf(i.s.toLowerCase()) >= 0)
+                 ) {
+                   e.l.info('Forced Format:', i.t, o, i.p);
+-                  var a = { data: { m: 'adzone', a: 'print', f: i.f, div_id: o, p: JSON.parse(i.p) } };
++                  var s = { data: { m: 'adzone', a: 'print', f: i.f, div_id: o, p: JSON.parse(i.p) } };
+                   window.setTimeout(function () {
+-                    adzone.readFormatMessage(a);
++                    adzone.readFormatMessage(s);
+                   }, 1 * i.t);
+                 }
+               }
+@@ -350,9 +350,9 @@
+                   e.s[d].values &&
+                   e.s[d].values.click_pixel &&
+                   e.send_audience_event(d, 'click', e.s[d].values.click_pixel));
+-              var a = e.formats[i].n;
+-              if (!(a in e.helpers)) return void console.log('-- Format ', a, ' not known.');
+-              var s = t.data.p || {},
++              var s = e.formats[i].n;
++              if (!(s in e.helpers)) return void console.log('-- Format ', s, ' not known.');
++              var a = t.data.p || {},
+                 l = t.data.n || '';
+               if ((e.s || (e.s = {}), 302 == i && e.s[d])) {
+                 let t = {};
+@@ -377,14 +377,14 @@
+               }
+               (e.s[d] || (e.s[d] = {}),
+                 (!e.s[d].format_id || ('print' == n && 119 == i) || ('print' == n && 109 == i)) &&
+-                  (e.helpers[a](e.s[d]),
++                  (e.helpers[s](e.s[d]),
+                   (e.s[d].format_id = i),
+-                  s.type && (e.s[d].type = s.type),
++                  a.type && (e.s[d].type = a.type),
+                   e.s[d].set('window', t.source),
+-                  s.events && (e.s[d].events = s.events)),
++                  a.events && (e.s[d].events = a.events)),
+                 l && !e.s[d].c_name && (e.s[d].creative_name = l),
+                 !e.s[d].get('window') && t.source && t.source.window && e.s[d].set('window', t.source.window),
+-                e.s[d]['_' + n] && e.s[d]['_' + n](e.s[d], s),
++                e.s[d]['_' + n] && e.s[d]['_' + n](e.s[d], a),
+                 !t.data.nt && e.p(d, n, t),
+                 'print' == n && e.s[d].parentSlot.classList.remove('adzone_float'));
+             }
+@@ -409,15 +409,15 @@
+               break;
+             }
+           if (i) {
+-            var a = document.getElementsByTagName('iframe');
+-            for (o = 0; o < a.length; ++o)
+-              if (a[o].contentWindow == i) {
+-                d = a[o];
++            var s = document.getElementsByTagName('iframe');
++            for (o = 0; o < s.length; ++o)
++              if (s[o].contentWindow == i) {
++                d = s[o];
+                 break;
+               }
+-            var s = d.parentElement.parentElement.id;
+-            if (s in e.s) return s;
+-            if ((s = d.parentElement.id) in e.s) return s;
++            var a = d.parentElement.parentElement.id;
++            if (a in e.s) return a;
++            if ((a = d.parentElement.id) in e.s) return a;
+           }
+         } catch (e) {}
+         return !1;
+@@ -492,10 +492,10 @@
+           ('epl_hb' == n.a && (e.ep_slots[n.s] = !0), 'render' == n.a && e.ep_slots[n.s] && (n.a = 'render_epl'));
+           var d = '';
+           for (var i in n) d += ('' == d ? '' : '&') + i + '=' + encodeURIComponent(n[i]);
+-          var a = new Image();
++          var s = new Image();
+           if ('render' != n.a) {
+-            var s = Date.now() + '' + Math.ceil(1e3 * Math.random());
+-            a.src = 'https://lb.adzone.io/p.gif?1&' + d + '&cb=' + s;
++            var a = Date.now() + '' + Math.ceil(1e3 * Math.random());
++            s.src = 'https://lb.adzone.io/p.gif?1&' + d + '&cb=' + a;
+           }
+         }
+       }),
+@@ -508,13 +508,13 @@
+             (adzone.set('video_itt_event_params', { ad_id: t, params: n }), adzone.set('add_video_close_event', !0)),
+           'video_play' == o && '303' == i && adzone.set('video_slider_event_params', { ad_id: t, params: n }));
+         var d = 0,
+-          a = n.creative_name || '';
++          s = n.creative_name || '';
+         n.creative_name &&
+           2 == n.creative_name.split('_').length &&
+-          ((d = n.creative_name.split('_')[0]), (a = n.creative_name.split('_')[1]));
+-        let s = 0;
++          ((d = n.creative_name.split('_')[0]), (s = n.creative_name.split('_')[1]));
++        let a = 0;
+         try {
+-          s = adzone.s[t].event.lineItemId;
++          a = adzone.s[t].event.lineItemId;
+         } catch (e) {}
+         var l = {
+             w: 0,
+@@ -524,8 +524,8 @@
+             wx: Math.round(e.get('window_width') / 100),
+             f: i,
+             p_id: d,
+-            c_id: a,
+-            li: s,
++            c_id: s,
++            li: a,
+             s: t || 0,
+             r: 1,
+             t: document.location.host,
+@@ -557,19 +557,19 @@
+         if (i) {
+           var d = Math.max(adzone.tracking_rate || 10, 100);
+           if (!(Math.random() > 1 / d)) {
+-            var a = 0;
+-            i && i.event && i.event.creativeId && (a = i.event.creativeId);
+             var s = 0;
+-            i && i.event && i.event.lineItemId && (s = i.event.lineItemId);
++            i && i.event && i.event.creativeId && (s = i.event.creativeId);
++            var a = 0;
++            i && i.event && i.event.lineItemId && (a = i.event.lineItemId);
+             var l = {
+                 w: i.width || 0,
+                 h: i.height || 0,
+                 hx: Math.round(e.get('window_height') / 100),
+                 wx: Math.round(e.get('window_width') / 100),
+                 f: i.format_id,
+-                ci: a,
++                ci: s,
+                 cn: i.creative_name || '',
+-                li: s,
++                li: a,
+                 s: t,
+                 a: o,
+                 r: d,
+@@ -921,18 +921,18 @@
+             );
+             else {
+               ((i.style.maxHeight = t.height + 'px'), (i.style.maxWidth = t.width + 'px'));
+-              var a = document.createElement('div');
++              var s = document.createElement('div');
+               (adzone.styles.itt_html && !d
+-                ? (a.innerHTML = adzone.styles.itt_html.replace(/\[\[div_id\]\]/g, e.divId))
+-                : ((a.id = 'adzone_ittIcon_c_' + e.divId),
+-                  (a.style.cssText =
++                ? (s.innerHTML = adzone.styles.itt_html.replace(/\[\[div_id\]\]/g, e.divId))
++                : ((s.id = 'adzone_ittIcon_c_' + e.divId),
++                  (s.style.cssText =
+                     'cursor:pointer;height:1px!important;width:1px!important;position:absolute!important;left:50%!important;top:50%!important;display:none!important;margin-left:' +
+                     (t.width / 2 - 1) +
+                     'px!important;margin-top:-' +
+                     (t.height / 2 - 1) +
+                     'px!important'),
+                   (adzone.styles.itt_close_mobile = adzone.styles.itt_close_mobile || adzone.styles.itt_close),
+-                  (a.innerHTML =
++                  (s.innerHTML =
+                     "<div id='adzone_ittIcon_" +
+                     e.divId +
+                     "' style='min-width:60px!important' onclick='adzone.helpers.itt_hide(\"" +
+@@ -940,8 +940,8 @@
+                     '", true);\'>' +
+                     adzone.styles['itt_close' + (adzone.device.isMobile ? '_mobile' : '')] +
+                     '</div>')),
+-                a.classList.add('adzone_itt_close_button'),
+-                n.appendChild(a));
++                s.classList.add('adzone_itt_close_button'),
++                n.appendChild(s));
+               let o = document.createElement('style');
+               ((o.id = 'adzone_itt_close_button_style'), document.head.appendChild(o));
+             }
+@@ -986,10 +986,10 @@
+                     }, 500));
+                 })),
+             adzone.helpers.itt_show(e.divId));
+-          var s = adzone.device.isMobile ? screen.width : window.innerWidth,
++          var a = adzone.device.isMobile ? screen.width : window.innerWidth,
+             l = adzone.device.isMobile ? screen.height : window.innerHeight;
+           ((adzone.device.isMobile ||
+-            t.width > s - 20 ||
++            t.width > a - 20 ||
+             t.height > l - 20 ||
+             adzone.styles.force_ittFixButtonTopRight) &&
+             adzone.helpers.ittFixButtonTopRight(e.divId),
+@@ -1246,7 +1246,8 @@
+               }
+             } else {
+               var i;
+-              ((n.style.zIndex = adzone.styles.footer_z_index || 9e4),
++              ((n.style.display = 'none'),
++                (n.style.zIndex = adzone.styles.footer_z_index || 9e4),
+                 (n.style.background = 'none repeat scroll 0 0 transparent'),
+                 (n.style.position = 'fixed'),
+                 (n.style.textAlign = 'center'),
+@@ -1849,14 +1850,14 @@
+             }, 2e3),
+             document.getElementById('adzone_push_cover') &&
+               (document.getElementById('adzone_push_cover').style.display = 'none'));
+-          var a = Math.max(document.documentElement.clientHeight, window.innerHeight || 0),
+-            s = document.createElement('div');
+-          ((s.id = 'adzone_header_push_scroll_div'),
+-            (s.style.cssText =
++          var s = Math.max(document.documentElement.clientHeight, window.innerHeight || 0),
++            a = document.createElement('div');
++          ((a.id = 'adzone_header_push_scroll_div'),
++            (a.style.cssText =
+               'width:1px;height:1px;background-color:transparent;position:absolute;left:1px;top:' +
+-              (2 * a - 1) +
++              (2 * s - 1) +
+               'px;'),
+-            document.body.appendChild(s));
++            document.body.appendChild(a));
+           ((e.observer = new IntersectionObserver((t, o) => {
+             t.forEach((t) => {
+               e.slot.id;
+@@ -1992,18 +1993,18 @@
+           var d = e.slot;
+           e.width;
+           if (!document.getElementById('adzone_footer_text_c_' + d.id)) {
+-            var a = document.createElement('div');
+-            ((a.id = 'adzone_footer_text_c_' + d.id),
+-              (a.style.position = 'absolute'),
+-              (a.style.right = '2px'),
+-              (a.style.top = '2px'),
+-              (a.style.cursor = 'pointer'),
+-              (a.style.zIndex = '1001'),
+-              (a.innerHTML =
++            var s = document.createElement('div');
++            ((s.id = 'adzone_footer_text_c_' + d.id),
++              (s.style.position = 'absolute'),
++              (s.style.right = '2px'),
++              (s.style.top = '2px'),
++              (s.style.cursor = 'pointer'),
++              (s.style.zIndex = '1001'),
++              (s.innerHTML =
+                 '<div id=\'adzone_tab_to_popup_close_icon\' onclick="adzone.helpers.tab_to_popup_close();">' +
+                 adzone.styles.footer_close +
+                 '</div>'),
+-              d.appendChild(a));
++              d.appendChild(s));
+           }
+           document.getElementById('adzone_tab_to_popup_close_icon') &&
+             (document.getElementById('adzone_tab_to_popup_close_icon').style.display = '');
+@@ -2237,22 +2238,22 @@
+         ((d.style.background = 'none repeat scroll 0 0 white'), (d.style.margin = 'auto'));
+         e.width;
+         if (!document.getElementById('adzone_footer_text_c_' + e.divId)) {
+-          var a = document.createElement('div');
+-          ((a.id = 'adzone_footer_text_c_' + e.divId),
+-            (a.className = 'adzone_footer_close_icon'),
+-            (a.style.position = 'absolute'),
++          var s = document.createElement('div');
++          ((s.id = 'adzone_footer_text_c_' + e.divId),
++            (s.className = 'adzone_footer_close_icon'),
++            (s.style.position = 'absolute'),
+             adzone.force_format_128_right || (adzone.params && adzone.params.force_format_128_right)
+-              ? (a.style.right = '0px')
+-              : (a.style.left = '0px'),
+-            (a.style.top = '-23px'),
+-            (a.style.cursor = 'pointer'),
+-            (a.innerHTML =
++              ? (s.style.right = '0px')
++              : (s.style.left = '0px'),
++            (s.style.top = '-23px'),
++            (s.style.cursor = 'pointer'),
++            (s.innerHTML =
+               "<div style='display:none' id='adzone_footer_text_" +
+               e.divId +
+               "' onclick=\"adzone.helpers.footer_full_toggle('" +
+               e.divId +
+               '\');"></div>'),
+-            o.appendChild(a));
++            o.appendChild(s));
+         }
+         ((adzone.helpers.footer_full_isOpened = !0),
+           (document.getElementById('adzone_footer_text_' + e.divId).innerHTML =
+@@ -2316,20 +2317,20 @@
+             n = t.image.split('.')[1],
+             i = t.image.split('.')[0];
+           var d = 'https://s0.adzonestatic.com/images/' + i.split('_')[0] + '/' + i + '/image.' + n;
+-          let a = o ? '100vw auto' : e.width + 'px auto',
+-            s = o ? '100vw' : e.width + 'px',
++          let s = o ? '100vw auto' : e.width + 'px auto',
++            a = o ? '100vw' : e.width + 'px',
+             l = o ? 'margin-left:0' : 'margin:auto',
+             r = e.slot,
+             p = r.querySelector('iframe');
+           ((r.style.cssText =
+             '\n      width:' +
+-            s +
++            a +
+             ';height:' +
+             e.height +
+             'px;color:red;' +
+             l +
+             ';\n      background-attachment: fixed;\n      background-position-y: center;\n      background-repeat: no-repeat;\n      background-size:' +
+-            a +
++            s +
+             ';\n      max-width:' +
+             (o ? '100vw' : '100%') +
+             ';\n      background-image:url("' +
+@@ -2345,7 +2346,7 @@
+           if (
+             ((_.style.cssText =
+               'width:' +
+-              s +
++              a +
+               ';height:100%;z-index:100;position:fixed;top:0;left:0;background-color:transparent;cursor:pointer'),
+             _.setAttribute('onclick', 'window.open(clickTag)'),
+             c.body.appendChild(_),
+@@ -2583,10 +2584,10 @@
+             (e.slot.style.cssText =
+               'position:fixed;z-index:1000000;bottom:0;left:0;width:100vw;width:100dvw;height:0;background-color:' +
+               adzone.helpers.giant_footer_expanded_bg_color));
+-          let a = document.createElement('div');
+-          ((a.id = 'adzone_giant_footer_images'),
+-            (a.style.cssText = 'position: fixed;bottom:0;height:0;width:100vw;width:100dvw'),
+-            (a.innerHTML =
++          let s = document.createElement('div');
++          ((s.id = 'adzone_giant_footer_images'),
++            (s.style.cssText = 'position: fixed;bottom:0;height:0;width:100vw;width:100dvw'),
++            (s.innerHTML =
+               "\n        <style>\n          #adzone_footer_custom_format_container {display:none!important}\n          .adzone_giant_footer_img { position:fixed;width:auto;left:50%;transform:translateX(-50%);z-index:2; }\n          .adzone-show {display:inline-block!important} \n          .adzone-show-mob {display:none!important} \n          .adzone-show-dsk {display:inline-block!important} \n          #adzone-fix-zocalo { display:none!important}\n          .adzone-hide { display:none }\n          @media only screen and (max-width: 1200px) {\n            .adzone-show-mob {display:inline-block!important} \n            .adzone-show-dsk {display:none!important} \n          }\n          #adzone_giant_footer_icon_down {cursor:pointer;position:absolute;top:4px;transition:top ease-in 0.5;background-color:#cccccc66;border-radius:8px;height:30px;left:4px;z-index:5} \n        </style>\n        <div id='adzone_giant_footer_icon_down'>\n          \n        </div>\n        <img id='adzone_footer_expanded' src='" +
+               d +
+               "' style='height:100%;' class='adzone_giant_footer_img'>\n        <img id='adzone_footer_collapsed_1' style='display:none;max-width:100vw;max-height:100px' src='" +
+@@ -2594,11 +2595,11 @@
+               "' class='adzone_giant_footer_img'>\n        <img id='adzone_footer_collapsed_2' style='display:none;max-width:100vw;max-height:100px' src='" +
+               t.img_400x100 +
+               "' class='adzone_giant_footer_img'>\n      "),
+-            e.slot.appendChild(a));
+-          let s = document.createElement('div');
+-          ((s.innerHTML =
++            e.slot.appendChild(s));
++          let a = document.createElement('div');
++          ((a.innerHTML =
+             "<img id='adzone_giant_footer_icon' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAZCAMAAAAR624oAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAGYUExURezs7Ozs7AAAAOvr6+vr6+vr6+7u7uzs7Ozs7AAAAOzs7O/v7+vr6+/v7+zs7O7u7u/v7+7u7u7u7uzs7PDw8AAAAOvr6+zs7Ovr6+3t7e3t7ezs7PPz8+3t7fPz8+/v7wAAAAAAAAAAAAAAAOvr6+rq6vLy8vX19fX19ff39/v7+/j4+MvLy8bGxvHx8ff39/T09O3t7evr67q6uhgYGMXFxe7u7urq6vn5+ezs7PX19evr6+7u7vT09Ojo6LGxsQMDA9XV1ff39/z8/CEhIf7+/vz8/P////7+/jExMQUFBf39/fz8/Onp6fT09PX19fX19fHx8aurq/X19V5eXgoKCtLS0u3t7a+vr////zY2NrCwsNzc3PDw8NjY2Nzc3Nra2vr6+uXl5WFhYQAAAAoKCj09PQ4ODnZ2djQ0NDc3Nz4+Pvf39/////Pz8/X19erq6vX19WlpaXJycvn5+fX19fn5+fb29mlpafX19XV1dfLy8vT09Pn5+WhoaGpqav///3x8fGZmZqKionp6evn5+Xl5eaqqqlSuRgwAAACIdFJOUyMifCMkJyYkIQAMJCYGJyQEEgslFHsgICEgIh4XIR4Yen+CgyIhGx8bIhYiWF0fIxwfH3eFWx4/I1YcJTQWNHeFUi0VhSoXFReJghgWPhcXGB53FYmDUhl6LId4TRdOTkpKLYmFgoeDhYaHhU4tGVIlUXeJTSpOGHothyksGHhuKYd5bocXhnnFYA4QAAABJUlEQVQoz2Pg5OQUEOTmwADcggJAKQZOTi42PhZ2DMDCx8YFkhZi5WHACnhYhTgZeNmEGbFLMwqz8TKIsDLgBKwiDPzsuKXZ+Rk48ElzwKWlkFwAY8OlWcTV9c2YIYLMgRZ6YuzI0uzSWjrGTvLWILGC8qQgSzlVZGlJTV0TB3vXcBagOXmlRSkh5jIo0tqmLqJeEZGxzMytNRVKosm+MqiGOzt6MoVG58rXVtYpMxUXykmgOk3WOyxKIb29obpJWaEqP0CCHc1jsh7xmaKpzfVKom1l/hIY/mYwdI/JYlJUZGopCTbCDBag193i0piYGnP8xNixSAOBT0J2RqItM7ZABQFxKzsbAzGUMEeOMRZGDTUVdpQYIxDfBFILgbRGKKXiTecAao8tFJ8gBhYAAAAASUVORK5CYII=' style='width:30px;height:25px;cursor_pointer;position:absolute;top:0;left:0;z-index:10' onclick='adzone.helpers.giant_footer_collapse()'>"),
+-            e.slot.appendChild(s),
++            e.slot.appendChild(a),
+             (n.style.cssText = 'position:fixed;height:100%;width:100%;background-color:transparent;z-index:3'),
+             (i.click_tag = i.p.click_url + i.p.dest_url));
+           let l = i.document,
+@@ -2733,10 +2734,10 @@
+             (e.slot.style.cssText =
+               'position:fixed;z-index:1000000;bottom:0;left:0;width:100vw;width:100dvw;height:0;background-color:' +
+               adzone.helpers.double_footer_expanded_bg_color));
+-          let a = document.createElement('div');
+-          ((a.id = 'adzone_double_footer_images'),
+-            (a.style.cssText = 'position: fixed;bottom:0;height:0;width:100vw;width:100dvw'),
+-            (a.innerHTML =
++          let s = document.createElement('div');
++          ((s.id = 'adzone_double_footer_images'),
++            (s.style.cssText = 'position: fixed;bottom:0;height:0;width:100vw;width:100dvw'),
++            (s.innerHTML =
+               "\n        <style>\n          #adzone_footer_custom_format_container {display:none!important}\n          .adzone_double_footer_img { position:fixed;width:auto;left:50%;transform:translateX(-50%);z-index:2; }\n          .adzone-show {display:inline-block!important} \n          .adzone-show-mob {display:none!important} \n          .adzone-show-dsk {display:inline-block!important} \n          #adzone-fix-zocalo { display:none!important}\n          .adzone-hide { display:none }\n          @media only screen and (max-width: 1200px) {\n            .adzone-show-mob {display:inline-block!important} \n            .adzone-show-dsk {display:none!important} \n          }\n          #adzone_double_footer_icon_down {cursor:pointer;position:absolute;top:4px;transition:top ease-in 0.5;background-color:#cccccc66;border-radius:8px;height:30px;left:4px;z-index:5} \n        </style>\n        <div id='adzone_double_footer_icon_down'>\n          \n        </div>\n        <img id='adzone_footer_expanded' src='" +
+               d +
+               "' style='height:100%;' class='adzone_double_footer_img'>\n        <img id='adzone_footer_collapsed_1' style='display:none;max-width:100vw;max-height:100px' src='" +
+@@ -2744,7 +2745,7 @@
+               "' class='adzone_double_footer_img'>\n        <img id='adzone_footer_collapsed_2' style='display:none;max-width:100vw;max-height:100px' src='" +
+               t.img_400x100 +
+               "' class='adzone_double_footer_img'>\n      "),
+-            e.slot.appendChild(a),
++            e.slot.appendChild(s),
+             'mouseover' == t.expand_action &&
+               ((e.slot.onmouseover = function () {
+                 adzone.helpers.double_footer_collapse('expand');
+@@ -2752,10 +2753,10 @@
+               (e.slot.onmouseout = function () {
+                 adzone.helpers.double_footer_collapse('collapse');
+               })));
+-          let s = document.createElement('div');
+-          ((s.innerHTML =
++          let a = document.createElement('div');
++          ((a.innerHTML =
+             "<img id='adzone_double_footer_icon' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAZCAMAAAAR624oAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAGYUExURezs7Ozs7AAAAOvr6+vr6+vr6+7u7uzs7Ozs7AAAAOzs7O/v7+vr6+/v7+zs7O7u7u/v7+7u7u7u7uzs7PDw8AAAAOvr6+zs7Ovr6+3t7e3t7ezs7PPz8+3t7fPz8+/v7wAAAAAAAAAAAAAAAOvr6+rq6vLy8vX19fX19ff39/v7+/j4+MvLy8bGxvHx8ff39/T09O3t7evr67q6uhgYGMXFxe7u7urq6vn5+ezs7PX19evr6+7u7vT09Ojo6LGxsQMDA9XV1ff39/z8/CEhIf7+/vz8/P////7+/jExMQUFBf39/fz8/Onp6fT09PX19fX19fHx8aurq/X19V5eXgoKCtLS0u3t7a+vr////zY2NrCwsNzc3PDw8NjY2Nzc3Nra2vr6+uXl5WFhYQAAAAoKCj09PQ4ODnZ2djQ0NDc3Nz4+Pvf39/////Pz8/X19erq6vX19WlpaXJycvn5+fX19fn5+fb29mlpafX19XV1dfLy8vT09Pn5+WhoaGpqav///3x8fGZmZqKionp6evn5+Xl5eaqqqlSuRgwAAACIdFJOUyMifCMkJyYkIQAMJCYGJyQEEgslFHsgICEgIh4XIR4Yen+CgyIhGx8bIhYiWF0fIxwfH3eFWx4/I1YcJTQWNHeFUi0VhSoXFReJghgWPhcXGB53FYmDUhl6LId4TRdOTkpKLYmFgoeDhYaHhU4tGVIlUXeJTSpOGHothyksGHhuKYd5bocXhnnFYA4QAAABJUlEQVQoz2Pg5OQUEOTmwADcggJAKQZOTi42PhZ2DMDCx8YFkhZi5WHACnhYhTgZeNmEGbFLMwqz8TKIsDLgBKwiDPzsuKXZ+Rk48ElzwKWlkFwAY8OlWcTV9c2YIYLMgRZ6YuzI0uzSWjrGTvLWILGC8qQgSzlVZGlJTV0TB3vXcBagOXmlRSkh5jIo0tqmLqJeEZGxzMytNRVKosm+MqiGOzt6MoVG58rXVtYpMxUXykmgOk3WOyxKIb29obpJWaEqP0CCHc1jsh7xmaKpzfVKom1l/hIY/mYwdI/JYlJUZGopCTbCDBag193i0piYGnP8xNixSAOBT0J2RqItM7ZABQFxKzsbAzGUMEeOMRZGDTUVdpQYIxDfBFILgbRGKKXiTecAao8tFJ8gBhYAAAAASUVORK5CYII=' style='width:30px;height:25px;cursor_pointer;position:absolute;top:0;left:0;z-index:10' onclick='adzone.helpers.double_footer_collapse()'>"),
+-            e.slot.appendChild(s),
++            e.slot.appendChild(a),
+             (n.style.cssText = 'position:fixed;height:100%;width:100%;background-color:transparent;z-index:3'),
+             (i.click_tag = i.p.click_url + i.p.dest_url));
+           let l = i.document,
+@@ -3282,28 +3283,28 @@
+                 n = t.documentElement,
+                 i = t.getElementsByTagName('body')[0],
+                 d = e.innerWidth || n.clientWidth || i.clientWidth,
+-                a = e.innerHeight || n.clientHeight || i.clientHeight,
+-                s = 0,
++                s = e.innerHeight || n.clientHeight || i.clientHeight,
++                a = 0,
+                 l = 0,
+                 r = '100vw',
+                 p = '100vh',
+                 c = 0,
+                 _ = 0;
+               if ('bars' == o.zoom)
+-                o.video_ratio > d / a
+-                  ? ((s = Math.round(d / o.video_ratio)), (l = d))
+-                  : ((l = Math.round(a * o.video_ratio)), (s = a));
+-              else if (((l = d), (s = a), o.video_ratio > d / a)) {
+-                ((r = 'auto'), (c = '-' + (a * o.video_ratio - d) / 2 + 'px'));
++                o.video_ratio > d / s
++                  ? ((a = Math.round(d / o.video_ratio)), (l = d))
++                  : ((l = Math.round(s * o.video_ratio)), (a = s));
++              else if (((l = d), (a = s), o.video_ratio > d / s)) {
++                ((r = 'auto'), (c = '-' + (s * o.video_ratio - d) / 2 + 'px'));
+               } else {
+-                ((p = 'auto'), (_ = '-' + (d / o.video_ratio - a) / 2 + 'px'));
++                ((p = 'auto'), (_ = '-' + (d / o.video_ratio - s) / 2 + 'px'));
+               }
+               ((o.video.style.width = r),
+                 (o.video.style.height = p),
+                 (o.video.style.marginLeft = c),
+                 (o.video.style.marginTop = _),
+                 (document.querySelector('.controls').style.display = ''),
+-                (document.querySelector('.controls').style.top = 'calc(50% + ' + (s / 2 - 30) + 'px)'),
++                (document.querySelector('.controls').style.top = 'calc(50% + ' + (a / 2 - 30) + 'px)'),
+                 (document.querySelector('.controls').style.left = 'calc(50% - ' + l / 2 + 'px)'),
+                 (document.querySelector('.controls').style.width = l + 'px'),
+                 !o.is_playing &&
+[2026-11-06T18:30:27.004Z] 10003_adzone.25.01: sha256 e1a6b0af41f56417… → 151ca0a996eaca24… | bytes 120115 → 120138 | etag "0d3732fee7675c42c9f35fb4447ba4b6" → "77ce3ce807628cdcfebeea64910564aa" | lastModified Mon, 19 Oct 2026 13:47:43 GMT → Fri, 06 Nov 2026 12:44:13 GMT | hints {"commentV":"34","buildStamp":"2026-Oct-19 07:47:37"} → {"commentV":"35","buildStamp":"2026-Nov-06 06:44:07"}
