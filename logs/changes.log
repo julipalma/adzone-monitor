@@ -3399,3 +3399,72 @@
                  (document.querySelector('.controls').style.width = l + 'px'),
                  !o.is_playing &&
 [2026-11-06T18:30:27.004Z] 10003_adzone.25.01: sha256 e1a6b0af41f56417… → 151ca0a996eaca24… | bytes 120115 → 120138 | etag "0d3732fee7675c42c9f35fb4447ba4b6" → "77ce3ce807628cdcfebeea64910564aa" | lastModified Mon, 19 Oct 2026 13:47:43 GMT → Fri, 06 Nov 2026 12:44:13 GMT | hints {"commentV":"34","buildStamp":"2026-Oct-19 07:47:37"} → {"commentV":"35","buildStamp":"2026-Nov-06 06:44:07"}
+[2026-11-13T16:28:58.497Z] 10003_adzone.25.01: diff unificado (anterior vs actual, vía `diff -u`):
+--- /tmp/adzone-diff-jR3RwO/old.js	2026-11-13 16:28:58.488860568 +0000
++++ /tmp/adzone-diff-jR3RwO/new.js	2026-11-13 16:28:58.489860582 +0000
+@@ -1,8 +1,8 @@
+ // 10003_adzone.25.01
+-// v 35
+-// 2026-Nov-06 06:44:07
++// v 36
++// 2026-Nov-13 06:42:31
+ 
+-// v35
++// v36
+ 
+ !(function (e) {
+   if (
+@@ -32,7 +32,7 @@
+         (window.adzone.demo_printed = !0));
+     })();
+   }
+-  if (!(new Date().toISOString().split('T')[0] > '2026-12-15')) {
++  if (!(new Date().toISOString().split('T')[0] > '2027-02-15')) {
+     (!e.helpers && (e.helpers = {}), (e.log_history = e.log_history || []));
+     var t = (function () {
+       function e() {}
+@@ -281,7 +281,7 @@
+         return e;
+       }),
+       (e.run_forced_slots = function (t) {
+-        if (!(new Date().toISOString().split('T')[0] > '2026-12-15')) {
++        if (!(new Date().toISOString().split('T')[0] > '2027-02-15')) {
+           var o = 'N/A';
+           try {
+             if (((o = t.slot.getSlotElementId()), !t.isEmpty && t.size && t.size[0] && t.size[0] > 10))
+@@ -868,7 +868,7 @@
+           (adzone.styles.itt_close_mobile =
+             adzone.styles.itt_close_mobile ||
+             '<img style=\'float:left;max-width:48px;max-height:48px;width:48px;height:48px;margin-top:-34px;margin-right:-28px;\'src="https://cdn.jsdelivr.net/gh/adzone-io/rm@1.0.0/icon/close2.png">'),
+-          !(new Date().toISOString().split('T')[0] > '2026-12-15'))
++          !(new Date().toISOString().split('T')[0] > '2027-02-15'))
+         ) {
+           ((t.height = t.height || e.height),
+             (t.width = t.width || e.width),
+@@ -905,18 +905,19 @@
+             !adzone.styles.itt_template || '[[default]]' == adzone.styles.itt_template)
+           ) {
+             if (
+-              ((o.style.cssText =
+-                'position:absolute!important;margin-left:-' +
+-                t.width / 2 +
+-                'px!important;margin-top:-' +
+-                t.height / 2 +
+-                'px!important;top:50%!important;left:50%!important'),
++              ((n.style.display = 'none!important'),
+               (n.style.cssText =
+                 'display:none!important;position:fixed!important;left:0px!important;top:0px!important;background-color:' +
+                 t.background_color +
+                 '!important;width:100vw!important;height:100vh!important;height:100dvh!important;z-index:' +
+                 (adzone.styles.itt_z_index || '20000000') +
+                 '!important'),
++              (o.style.cssText =
++                'position:absolute!important;margin-left:-' +
++                t.width / 2 +
++                'px!important;margin-top:-' +
++                t.height / 2 +
++                'px!important;top:50%!important;left:50%!important'),
+               document.getElementById('adzone_ittIcon_c_' + e.divId))
+             );
+             else {
+[2026-11-13T16:28:58.861Z] 10003_adzone.25.01: sha256 151ca0a996eaca24… → dbb704815f45c68a… | bytes 120138 → 120171 | etag "77ce3ce807628cdcfebeea64910564aa" → "251afb4b54672c6c8ea267f5f2c74d39" | lastModified Fri, 06 Nov 2026 12:44:13 GMT → Fri, 13 Nov 2026 12:42:37 GMT | hints {"commentV":"35","buildStamp":"2026-Nov-06 06:44:07"} → {"commentV":"36","buildStamp":"2026-Nov-13 06:42:31"}
